@@ -12,17 +12,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Dukbab_yeeun"
         tools:targetApi="31">
-
-        <!-- LoginActivity를 첫 번째로 설정 -->
+        <activity
+            android:name=".ReviewwriteActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:exported="false" />
+        <activity
+            android:name=".ReviewActivity"
+            android:exported="false" /> <!-- LoginActivity를 첫 번째로 설정 -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MenuActivity"
             android:exported="false" />
@@ -34,8 +39,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
     </application>
 
 </manifest>

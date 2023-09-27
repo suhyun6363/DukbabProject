@@ -1,4 +1,4 @@
-package kr.ac.duksung.dukbab_yeeun;
+package kr.ac.duksung.dukbab;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +20,11 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // 다른 버튼 클릭 이벤트 처리 메서드를 추가할 수 있습니다.
+    public void onReviewClick(View view) {
+        // 리뷰페이지로 이동하는 코드
+        Intent intent = new Intent(this, ReviewActivity.class);
+        startActivity(intent);
+    }
+
+
 }

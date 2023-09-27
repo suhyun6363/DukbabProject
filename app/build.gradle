@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'kr.ac.duksung.dukbab_yeeun'
+    namespace 'kr.ac.duksung.dukbab'
     compileSdk 33
 
     defaultConfig {
-        applicationId "kr.ac.duksung.dukbab_yeeun"
+        applicationId "kr.ac.duksung.dukbab"
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -23,8 +23,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 

@@ -1,4 +1,4 @@
-package kr.ac.duksung.dukbab_yeeun;
+package kr.ac.duksung.dukbab;
 
 import androidx.appcompat.app.AppCompatActivity;
 
