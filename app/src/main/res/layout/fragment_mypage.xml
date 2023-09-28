@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".navigation.MypageActivity">
+    android:layout_height="match_parent">
 
     <!-- 사용자 이름 또는 메일을 표시할 TextView -->
     <TextView
@@ -45,7 +44,6 @@
             android:id="@+id/logoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onLogoutClick"
             android:text="로그아웃" />
     </LinearLayout>
 

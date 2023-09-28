@@ -15,8 +15,8 @@ import android.content.Intent;
 
 
 import kr.ac.duksung.dukbab.navigation.HeartFragment;
-import kr.ac.duksung.dukbab.navigation.HomeFragment;
-import kr.ac.duksung.dukbab.navigation.MypageActivity;
+import kr.ac.duksung.dukbab.Home.HomeFragment;
+import kr.ac.duksung.dukbab.navigation.MypageFragment;
 import kr.ac.duksung.dukbab.navigation.ReviewActivity;
 
 
@@ -53,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
                     replaceFragment(new HeartFragment());
                     return true;
                 case R.id.navigation_mypage:
-                    startActivity(new Intent(HomeActivity.this, MypageActivity.class));
+                    replaceFragment(new MypageFragment());
                     return true;
             }
             return false;

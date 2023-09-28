@@ -1,4 +1,4 @@
-package kr.ac.duksung.dukbab;
+package kr.ac.duksung.dukbab.Home;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
+
+import kr.ac.duksung.dukbab.R;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 

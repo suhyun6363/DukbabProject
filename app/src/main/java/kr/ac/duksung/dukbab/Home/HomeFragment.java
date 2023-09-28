@@ -1,4 +1,4 @@
-package kr.ac.duksung.dukbab.navigation;
+package kr.ac.duksung.dukbab.Home;
 
 import android.os.Bundle;
 
@@ -13,9 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 
-import kr.ac.duksung.dukbab.MenuViewFragment;
 import kr.ac.duksung.dukbab.R;
 
 public class HomeFragment extends Fragment {

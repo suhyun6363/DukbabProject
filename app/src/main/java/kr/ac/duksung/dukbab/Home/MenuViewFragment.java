@@ -1,4 +1,4 @@
-package kr.ac.duksung.dukbab;
+package kr.ac.duksung.dukbab.Home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.ac.duksung.dukbab.GridSpaceItemDecoration;
+import kr.ac.duksung.dukbab.R;
 
 public class MenuViewFragment extends Fragment {
     private static final String ARG_TAB_TEXT = "tab_text";
