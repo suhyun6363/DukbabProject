@@ -19,13 +19,13 @@
         app:tabTextColor="#A1A9AD"
         tools:ignore="SpeakableTextPresentCheck" />
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_below="@id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="375dp"
-            android:layout_marginTop="17dp"
-            android:layout_marginLeft="16dp" />
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_below="@id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="375dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginLeft="16dp" />
 
     <LinearLayout
         android:id="@+id/cart_container"
