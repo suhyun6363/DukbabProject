@@ -17,7 +17,7 @@ import android.content.Intent;
 import kr.ac.duksung.dukbab.navigation.HeartFragment;
 import kr.ac.duksung.dukbab.Home.HomeFragment;
 import kr.ac.duksung.dukbab.navigation.MypageFragment;
-import kr.ac.duksung.dukbab.navigation.ReviewActivity;
+import kr.ac.duksung.dukbab.navigation.ReviewFragment;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -46,7 +46,7 @@ public class HomeActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_review:
                     // 리뷰 아이콘 클릭 시 ReviewActivity로 이동
-                    startActivity(new Intent(HomeActivity.this, ReviewActivity.class));
+                    replaceFragment(new ReviewFragment());
                     return true;
 
                 case R.id.navigation_heart:

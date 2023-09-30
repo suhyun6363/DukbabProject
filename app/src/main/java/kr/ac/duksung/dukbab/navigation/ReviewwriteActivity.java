@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.content.Intent;
 
 import kr.ac.duksung.dukbab.R;
+import android.view.Window;
 
 public class ReviewwriteActivity extends AppCompatActivity {
 
@@ -23,6 +24,7 @@ public class ReviewwriteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("리뷰 작성하기");
         setContentView(R.layout.activity_reviewwrite);
 
         Button saveButton = findViewById(R.id.save_button);
@@ -46,26 +48,42 @@ public class ReviewwriteActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // ReviewActivity로 돌아가는 Intent를 생성
-                Intent intent = new Intent(ReviewwriteActivity.this, ReviewActivity.class);
-                // ReviewActivity를 새로 시작하고 현재 Activity를 종료
-                startActivity(intent);
+                // 현재 Activity를 종료하여 ReviewFragment로 돌아감
                 finish();
             }
         });
+
+        // "저장" 버튼 클릭 이벤트 핸들러
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Spinner에서 선택된 음식점명을 가져오기
+                String selectedRestaurant = restaurantSpinner.getSelectedItem().toString();
+                // EditText에서 메뉴명, 리뷰 내용 가져오기
+                String menuName = menuNameEditText.getText().toString();
+                String reviewContent = reviewContentEditText.getText().toString();
+                // RatingBar에서 평점 가져오기
+                float rating = ratingBar.getRating();
+
+                // 여기에 저장 로직을 추가하면 됩니다.
+                // 저장 로직이 완료되면 Toast 메시지를 띄워 사용자에게 알립니다.
+                // 저장이 성공했을 때의 처리를 여기에 추가하세요.
+
+                // 저장이 완료되었음을 사용자에게 알리는 Toast 메시지 띄우기
+                Toast.makeText(ReviewwriteActivity.this, "작성이 완료되었습니다", Toast.LENGTH_SHORT).show();
+
+                // 현재 Activity를 종료하여 ReviewFragment로 돌아감
+                finish();
+            }
+        });
+
+
+
     }
 
-    // 저장 버튼 클릭 이벤트 핸들러
-    public void onSaveClick(View view) {
-        String restaurantName = restaurantSpinner.getSelectedItem().toString();
-        String menuName = menuNameEditText.getText().toString();
-        float rating = ratingBar.getRating();
-        String reviewContent = reviewContentEditText.getText().toString();
 
-        // 이후 리뷰를 저장하거나 다른 작업을 수행하는 코드를 추가할 수 있습니다.
-        // 예를 들어, 데이터베이스에 리뷰를 저장하거나 서버에 업로드할 수 있습니다.
 
-        // 예시: 간단한 토스트 메시지 표시
-        Toast.makeText(this, "리뷰가 저장되었습니다.", Toast.LENGTH_SHORT).show();
-    }
+
+
+
 }
