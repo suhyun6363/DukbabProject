@@ -2,13 +2,20 @@ package kr.ac.duksung.dukbab;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.content.Intent;
@@ -36,7 +43,9 @@ public class HomeActivity extends AppCompatActivity {
         mainContent = findViewById(R.id.main_content);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new HomeFragment()).commit();
+        // FragmentManager를 생성합니다.
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.main_content, new HomeFragment()).commit();
 
         bottomNavigationView.setSelectedItemId(R.id.navigation_home);
         bottomNavigationView.setOnItemSelectedListener(item -> {

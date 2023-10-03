@@ -8,7 +8,7 @@
     tools:context=".navigation.ReviewActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/optionView"
         android:layout_width="414dp"
         android:layout_height="498dp"
         app:layout_constraintBottom_toBottomOf="parent"
