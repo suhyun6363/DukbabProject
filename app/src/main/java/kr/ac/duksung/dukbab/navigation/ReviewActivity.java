@@ -18,7 +18,7 @@ public class ReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
 
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.optionView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         Button writeReviewButton = findViewById(R.id.write_review_button);

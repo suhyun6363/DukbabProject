@@ -1,4 +1,4 @@
-package kr.ac.duksung.dukbab;
+package kr.ac.duksung.dukbab.Home;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,17 +6,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import kr.ac.duksung.dukbab.GridSpaceItemDecoration;
 import kr.ac.duksung.dukbab.Home.OptionDTO;
+import kr.ac.duksung.dukbab.R;
 
 public class OptionAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private List<OptionDTO> optionList;
+    private OptionContentAdapter optionContentAdapter;
 
     public OptionAdapter(List<OptionDTO> optionList) {
         this.optionList = optionList;
@@ -37,16 +44,27 @@ public class OptionAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         optionViewHolder.optionName.setText(option.getName());
 
-        // 서브 RecyclerView 설정
-        SubOptionAdapter subOptionAdapter = new SubOptionAdapter(option.getSubOptions());
-        optionViewHolder.subOptionRecyclerView.setAdapter(subOptionAdapter);
-        optionViewHolder.subOptionRecyclerView.setLayoutManager(new LinearLayoutManager(optionViewHolder.itemView.getContext()));
+        // 세부 옵션 목록을 RecyclerView에 설정
+        optionContentAdapter = new OptionContentAdapter(option.getOptionContents());
+        GridLayoutManager layoutManager = new GridLayoutManager(optionViewHolder.optionContentView.getContext(), 3); // 열 수
+        optionViewHolder.optionContentView.setLayoutManager(layoutManager);
+        optionViewHolder.optionContentView.addItemDecoration(new GridSpaceItemDecoration(3, 28));
+        optionViewHolder.optionContentView.setAdapter(optionContentAdapter);
     }
 
     @Override
     public int getItemCount() {
         return optionList.size();
     }
+
+/*
+    public List<String> getSelectedOptionList() {
+        List<String> selectedOptionList = new ArrayList<>();
+        for (OptionDTO option : getSelectedOptionContents) {
+            selectedOptionStrings.add(option.getName() + ": " + option.getSelectedOption());
+        }
+    }
+*/
 
     // ViewHolder 클래스
     public static class OptionViewHolder extends ViewHolder {
