@@ -10,7 +10,7 @@ html = requests.get(url) # url 요청에 따른 html정보
 if html.status_code != 200: # 정상적 획득 유무 확인
     print('status_code : ', html.status_code)
 
-
+#result
 soup = BeautifulSoup(html.text, 'html.parser') # html beatifulsoup으로 변환환
 colleges = soup.select('#result > div')        # 단과대학 정보 획득을 위한 div tag들을 list로 반환
 print("추출된 # of div list :", len(colleges))  # 일단 갯 수 확인
