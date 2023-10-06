@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray_">#A1A9AD</color>
+    <color name="gray_666">#666</color>
+    <color name="gray_c2">#C2C2C2</color>
+    <color name="gray_d3">#D3D3D3</color>
+    <color name="gray_d9">#D9D9D9</color>
+    <color name="duksung">#8B173E</color>
 </resources>

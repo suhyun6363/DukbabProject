@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/menuItem"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,7 +21,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars" />
-            <!--android:src="@drawable/menu_image_placeholder"-->
+        <!--android:src="@drawable/menu_image_placeholder"-->
     </androidx.cardview.widget.CardView>
 
     <!-- 메뉴 이름과 가격을 표시할 수 있는 수직 레이아웃 -->
