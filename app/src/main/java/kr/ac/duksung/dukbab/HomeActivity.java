@@ -43,26 +43,32 @@ public class HomeActivity extends AppCompatActivity {
         mainContent = findViewById(R.id.main_content);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        // Fragment 초기화
+        HomeFragment homeFragment = new HomeFragment();
+        ReviewFragment reviewFragment = new ReviewFragment();
+        HeartFragment heartFragment = new HeartFragment();
+        MypageFragment mypageFragment = new MypageFragment();
+
         // FragmentManager를 생성합니다.
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.main_content, new HomeFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.main_content, homeFragment).commit();
 
         bottomNavigationView.setSelectedItemId(R.id.navigation_home);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    replaceFragment(new HomeFragment());
+                    replaceFragment(homeFragment, "HomeFragment");
                     return true;
                 case R.id.navigation_review:
                     // 리뷰 아이콘 클릭 시 ReviewActivity로 이동
-                    replaceFragment(new ReviewFragment());
+                    replaceFragment(reviewFragment, "ReviewFragment");
                     return true;
 
                 case R.id.navigation_heart:
-                    replaceFragment(new HeartFragment());
+                    replaceFragment(heartFragment, "HeartFragment");
                     return true;
                 case R.id.navigation_mypage:
-                    replaceFragment(new MypageFragment());
+                    replaceFragment(mypageFragment, "MypageFragment");
                     return true;
             }
             return false;
@@ -96,7 +102,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // Fragment를 교체하는 메서드
-    private void replaceFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, fragment).commit();
+    private void replaceFragment(Fragment fragment, String tag) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, fragment, tag).commit();
     }
 }

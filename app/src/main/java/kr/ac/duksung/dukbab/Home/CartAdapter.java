@@ -21,11 +21,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         this.cartList = cartList;
     }
 
-    public void addItem(CartDTO cart){
-        cartList.add(cart);
-
-    }
-
     @NonNull
     @Override
     public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,11 +30,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
+
+        // 해당 위치(position)의 cartItem을 가져옵니다.
         CartDTO cartItem = cartList.get(position);
 
+        // cartItem의 정보를 ViewHolder에 설정합니다.
         holder.menuName.setText(cartItem.getMenuName());
-        holder.menuPrice.setText("가격: ₩" + cartItem.getMenuPrice());
-        holder.optionList.setText("옵션: " + cartItem.getSelectedOptions());
+        holder.menuPrice.setText(cartItem.getMenuPrice());
+        holder.optionList.setText(cartItem.getSelectedOptions().toString());
+
 /*
         // 필요에 따라 아이템 삭제 기능을 추가하세요.
         holder.cartItemRemove.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +55,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public int getItemCount() {
-        return cartList.size();
+        if(cartList == null)
+            return 0;
+        else
+            return cartList.size();
     }
 
     // ViewHolder 클래스

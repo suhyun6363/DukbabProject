@@ -2,19 +2,18 @@ package kr.ac.duksung.dukbab.Home;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -26,7 +25,18 @@ public class HomeFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private RecyclerView cartView;
-    private List<CartDTO> cartItemList = new ArrayList<CartDTO>();
+    private CartAdapter cartAdapter;
+    private CartDTO cartItem;
+    private List<CartDTO> cartList = new ArrayList<>();
+
+    public static HomeFragment newInstance(CartDTO cartItem) {
+        Bundle args = new Bundle();
+        args.putParcelable("cartItem", cartItem); // 데이터를 추가
+        HomeFragment fragment = new HomeFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +44,8 @@ public class HomeFragment extends Fragment {
 
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
+        cartView = view.findViewById(R.id.cart);
+
         // 탭 추가
         tabLayout.addTab(tabLayout.newTab().setText("오늘의 메뉴"));
         tabLayout.addTab(tabLayout.newTab().setText("마라탕"));
@@ -70,6 +82,19 @@ public class HomeFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+
+        Bundle args = getArguments();
+        if(args != null) {
+            cartItem = args.getParcelable("cartItem");
+            cartList.add(cartItem);
+
+            cartAdapter = new CartAdapter(cartList);
+            cartView.setAdapter(cartAdapter);
+            cartView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+            cartAdapter.notifyDataSetChanged();
+        }
+
 
         return view;
     }
