@@ -10,11 +10,13 @@ import android.util.Log;
 
 public class Database{
     private static Database instance;
-    private SQLiteDatabase mDB = null; // User.db 데이터베이스
-    private SQLiteDatabase mReviewDB = null; // Review.db 데이터베이스
-    private SQLiteDatabase mOrderDB = null; // Order.db 데이터베이스
+    private SQLiteDatabase mDB = null;          // User.db 데이터베이스
+    private SQLiteDatabase mReviewDB = null;    // Review.db 데이터베이스
+    private SQLiteDatabase mCartDB = null;      // Cart.db 데이터베이스
+    private SQLiteDatabase mOrderDB = null;     // Order.db 데이터베이스
     private DBOpenHelper mDBopenHelper = null;
     private ReviewDBOpenHelper mReviewDBOpenHelper = null;
+    private CartDBOpenHelper mCartDBOpenHelper = null;
     private OrderDBOpenHelper mOrderDBOpenHelper = null;
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -50,6 +52,14 @@ public class Database{
         mReviewDB = mReviewDBOpenHelper.getWritableDatabase();
     }
 
+    // Cart.db 데이터베이스 열기
+    public void openCartDB(Context context) throws SQLException {
+        if (mCartDBOpenHelper == null) {
+            mCartDBOpenHelper = new CartDBOpenHelper(context);
+            mCartDB = mCartDBOpenHelper.getWritableDatabase();
+        }
+    }
+
     // Order.db 데이터베이스 열기
     public void openOrderDB(Context context) throws SQLException {
         if (mOrderDBOpenHelper == null) {
@@ -71,6 +81,13 @@ public class Database{
     public void closeReviewDB() {
         if (mReviewDB != null && mReviewDB.isOpen()) {
             mReviewDB.close();
+        }
+    }
+
+    // Cart.db 데이터베이스 닫기
+    public void closeCartDB() {
+        if (mCartDB != null && mCartDB.isOpen()) {
+            mCartDB.close();
         }
     }
 
@@ -129,8 +146,9 @@ public class Database{
         String[] columns = {
                 OrderDBOpenHelper.COLUMN_ORDER_ID,
                 OrderDBOpenHelper.COLUMN_EMAIL,
+                OrderDBOpenHelper.COLUMN_NICKNAME,
                 OrderDBOpenHelper.COLUMN_ORDER_DATE,
-                OrderDBOpenHelper.COLUMN_STORE_ID,
+                OrderDBOpenHelper.COLUMN_SELECTED_RESTAURANT,
                 OrderDBOpenHelper.COLUMN_STATUS,
                 OrderDBOpenHelper.COLUMN_TOTAL_PRICE,
                 OrderDBOpenHelper.COLUMN_PAYMENT_METHOD
@@ -142,7 +160,7 @@ public class Database{
             } else {
                 // 특정 이메일에 해당하는 리뷰를 반환
                 String selection = OrderDBOpenHelper.COLUMN_EMAIL + "=?";
-                String[] selectionArgs = {String.valueOf(email)};
+                String[] selectionArgs = {email};
                 return mOrderDB.query(OrderDBOpenHelper.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
             }
         } catch (SQLException e) {
@@ -200,16 +218,45 @@ public class Database{
         }
     }
 
+    // 장바구니 데이터 저장하는 메서드
+    // 후에 cartActivity 생기면 옮길 예정
+    public long insertCart(String email, String nickname, String selectedRestaurant, String menuName, String menuOptionId, int quantity, String cartCreatedDate) {
+        mCartDB.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(CartDBOpenHelper.COLUMN_EMAIL, email);
+            values.put(CartDBOpenHelper.COLUMN_NICKNAME, nickname);
+            values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
+            values.put(CartDBOpenHelper.COLUMN_MENU_NAME, menuName);
+            values.put(CartDBOpenHelper.COLUMN_MENU_OPTION_ID, menuOptionId);
+            values.put(CartDBOpenHelper.COLUMN_QUANTITY, quantity);
+            values.put(CartDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate);
+
+            long result = mCartDB.insert(CartDBOpenHelper.TABLE_NAME, null, values);
+
+            if (result != -1) {
+                mCartDB.setTransactionSuccessful();
+            }
+            return result;
+        } catch (SQLException e) {
+            Log.e("Database", "Error inserting cart data: " + e.getMessage());
+            return -1;
+        } finally {
+            mCartDB.endTransaction();
+        }
+    }
+
 
     // 주문 데이터를 저장하는 메서드
-    public long insertOrder(String orderId, String email, String orderDate, String storeId, String status, String totalPrice, String paymentMethod) {
+    // 후에 orderActivity 생기면 옮길 예정
+    public long insertOrder(String email, String nickname, String orderDate, String selectedRestaurant, String status, String totalPrice, String paymentMethod) {
         mOrderDB.beginTransaction(); // 트랜잭션 시작
         try {
             ContentValues values = new ContentValues();
-            values.put(OrderDBOpenHelper.COLUMN_ORDER_ID, orderId);
             values.put(OrderDBOpenHelper.COLUMN_EMAIL, email);
+            values.put(OrderDBOpenHelper.COLUMN_NICKNAME, nickname);
             values.put(OrderDBOpenHelper.COLUMN_ORDER_DATE, orderDate);
-            values.put(OrderDBOpenHelper.COLUMN_STORE_ID, storeId);
+            values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
             values.put(OrderDBOpenHelper.COLUMN_STATUS, status);
             values.put(OrderDBOpenHelper.COLUMN_TOTAL_PRICE, totalPrice);
             values.put(OrderDBOpenHelper.COLUMN_PAYMENT_METHOD, paymentMethod);
