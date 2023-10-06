@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home"
+        android:textStyle="bold"
+        android:title="홈" />
+    <item
+        android:id="@+id/navigation_review"
+        android:title="리뷰"
+        android:textStyle="bold"
+        android:icon="@drawable/ic_review"/>
+    <item
+        android:id="@+id/navigation_heart"
+        android:title="찜"
+        android:textStyle="bold"
+        android:icon="@drawable/ic_heart" />
+    <item
+        android:id="@+id/navigation_mypage"
+        android:title="마이페이지"
+        android:textStyle="bold"
+        android:icon="@drawable/ic_mypage" />
+</menu>
