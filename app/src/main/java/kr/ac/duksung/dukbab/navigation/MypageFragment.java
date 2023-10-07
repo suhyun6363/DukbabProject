@@ -82,3 +82,4 @@ public class MypageFragment extends Fragment {
         editor.apply();
     }
 }
+

@@ -53,7 +53,6 @@ public class SignupActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "이미 존재하는 이메일입니다.", Toast.LENGTH_SHORT).show();
             }
-
         } else {
             Toast.makeText(this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
         }
