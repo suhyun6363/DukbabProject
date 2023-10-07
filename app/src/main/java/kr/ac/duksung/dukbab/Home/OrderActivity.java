@@ -1,7 +1,6 @@
 package kr.ac.duksung.dukbab.Home;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +15,7 @@ public class OrderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+
 
         // 주문 정보를 받아옴
         ArrayList<CartDTO> cartList = getIntent().getParcelableArrayListExtra("cartList");
