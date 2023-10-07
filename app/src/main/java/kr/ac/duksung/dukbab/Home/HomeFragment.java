@@ -1,5 +1,6 @@
 package kr.ac.duksung.dukbab.Home;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
@@ -27,6 +30,8 @@ public class HomeFragment extends Fragment {
     private RecyclerView cartView;
     private CartAdapter cartAdapter;
     private CartDTO cartItem;
+    private TextView totalCount, totalPrice, removeAll;
+    private Button orderBtn;
     private List<CartDTO> cartList = new ArrayList<>();
 
     public static HomeFragment newInstance(CartDTO cartItem) {
@@ -45,6 +50,10 @@ public class HomeFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
         cartView = view.findViewById(R.id.cart);
+        totalCount = view.findViewById(R.id.totalCount);
+        totalPrice = view.findViewById(R.id.totalPrice);
+        removeAll = view.findViewById(R.id.removeAll);
+        orderBtn = view.findViewById(R.id.order_btn);
 
         // 탭 추가
         tabLayout.addTab(tabLayout.newTab().setText("오늘의 메뉴"));
@@ -93,9 +102,30 @@ public class HomeFragment extends Fragment {
             cartView.setLayoutManager(new LinearLayoutManager(getContext()));
 
             cartAdapter.notifyDataSetChanged();
+
+            totalCount.setText("총 " + cartList.size() + "개");
+
+            //totalPrice.
+
+            removeAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    cartList.clear();
+                    cartAdapter.notifyDataSetChanged();
+                }
+            });
+
+            // 주문 버튼 클릭 리스너 설정
+            orderBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 주문 정보를 다음 화면(주문 창 액티비티)으로 전달
+                    Intent intent = new Intent(getContext(), OrderActivity.class);
+                    intent.putParcelableArrayListExtra("cartList", new ArrayList<>(cartList));
+                    startActivity(intent);
+                }
+            });
         }
-
-
         return view;
     }
 }

@@ -24,6 +24,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +35,14 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     public static final String TAG = "OptionDrawerFragment";
 
     private MenuDTO menu;
-    private ImageView menuImg;
-    private TextView menuName, menuPrice;
+    private ImageView menuImg, minusButton, plusButton, heartButton;
+    private TextView menuName, menuPrice, quantityTextView, optionTotalPrice;
     private RecyclerView optionView;
     private List<String> selectedOptionsList = new ArrayList<>();
     private List<String> newSelectedOptionList = new ArrayList<>();
     private boolean isHeartSelected = false;
     private CartDTO cartItem;
-
+    private int quantityInt = 1;
 
 
     public static OptionDrawerFragment newInstance(MenuDTO menu) {
@@ -70,7 +72,11 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         optionView = view.findViewById(R.id.optionView);
         Button btnAddToCart = view.findViewById(R.id.cart_btn);
         //drawerFooter = view.findViewById(R.id.drawerFooter);
-        ImageView heart = view.findViewById(R.id.heart);
+        heartButton = view.findViewById(R.id.heart);
+        minusButton = view.findViewById(R.id.minus);
+        quantityTextView = view.findViewById(R.id.quantity);
+        plusButton = view.findViewById(R.id.plus);
+        optionTotalPrice = view.findViewById(R.id.optionTotalPrice);
 
 
         Bundle args = getArguments();
@@ -80,6 +86,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             menuImg.setImageResource(menu.getImageResourceId());
             menuName.setText(menu.getName());
             menuPrice.setText("￦ " + menu.getPrice());
+            optionTotalPrice.setText("￦ " + menu.getPrice());
 
             List<OptionDTO> optionList = getOptionData();
 
@@ -96,39 +103,76 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                 public void onClick(View v) {
                     selectedOptionsList = optionAdapter.getSelectedOptionList();
                     // 옵션 선택 정보와 메뉴 정보를 장바구니에 추가
-                    cartItem = createCartItem(menu, optionList, selectedOptionsList);
-                    Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
+                    if (selectedOptionsList.size() == optionList.size()) {
+                        cartItem = createCartItem(menu, optionList, selectedOptionsList);
+                        Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
 
-                    // HomeFragment에 수신
-                    Bundle args = new Bundle();
-                    args.putParcelable("cartItem", cartItem);
-                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                    HomeFragment homeFragment = new HomeFragment();
-                    homeFragment.setArguments(args);
-                    transaction.replace(R.id.main_content, homeFragment);
-                    transaction.commit();
+                        // HomeFragment에 수신
+                        Bundle args = new Bundle();
+                        args.putParcelable("cartItem", cartItem);
+                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                        HomeFragment homeFragment = new HomeFragment();
+                        homeFragment.setArguments(args);
+                        transaction.replace(R.id.main_content, homeFragment);
+                        transaction.commit();
 
 
-                    // 모달 다이얼로그 표시
-                    showCartConfirmationDialog();
+                        // 모달 다이얼로그 표시
+                        showCartConfirmationDialog();
 
-                    dismiss(); // 옵션창 닫기
+                        dismiss(); // 옵션창 닫기
+                    }
+                    else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                        builder.setMessage("옵션을 선택해주세요.");
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 확인 버튼 클릭 시, 원하는 동작 수행
+                            }
+                        });
+                        builder.show();
+                    }
                 }
             });
 
             // 하트 이미지 클릭 이벤트 처리
-            heart.setOnClickListener(new View.OnClickListener() {
+            heartButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // 현재 하트 이미지 상태에 따라 다른 이미지로 변경
                     if (isHeartSelected) {
                         // 이미 선택된 상태인 경우, 선택 해제 (ic_heart_default)
-                        heart.setImageResource(R.drawable.ic_heart_default);
+                        heartButton.setImageResource(R.drawable.ic_heart_default);
                         isHeartSelected = false;
                     } else {
                         // 선택되지 않은 상태인 경우, 선택 (ic_heart_fill)
-                        heart.setImageResource(R.drawable.ic_heart_fill);
+                        heartButton.setImageResource(R.drawable.ic_heart_fill);
                         isHeartSelected = true;
+                    }
+                }
+            });
+
+            minusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (quantityInt > 1) {
+                        quantityInt--;
+                        quantityTextView.setText(String.valueOf(quantityInt));
+                        updateOptionTotalPrice();
+                    }
+                    updateButtonsVisibility();
+                }
+            });
+
+            plusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    quantityInt++;
+                    if(quantityInt > 1) {
+                        updateButtonsVisibility();
+                        quantityTextView.setText(String.valueOf(quantityInt));
+                        updateOptionTotalPrice();
                     }
                 }
             });
@@ -159,8 +203,9 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             }
             idx = 0;
         }
-        cartItem = new CartDTO(menuName, menuPrice, newSelectedOptionList);
-        Log.d(TAG, cartItem.getSelectedOptions().toString());
+
+        cartItem = new CartDTO(menuName, menuPrice, quantityInt, newSelectedOptionList);
+        //Log.d(TAG, cartItem.getSelectedOptions().toString());
         return cartItem;
     }
 
@@ -176,6 +221,23 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             }
         });
         builder.show();
+    }
+
+    // 총합 가격을 업데이트하는 메서드 추가
+    private void updateOptionTotalPrice() {
+        int menuPriceInt = Integer.parseInt(menu.getPrice().replace(",", "")); // 가격에서 특수 문자 제거
+        int optionTotalPriceInt = menuPriceInt * quantityInt; // 수량과 가격을 곱하여 총합 가격 계산
+        // 총합 가격을 숫자 포맷팅을 사용하여 표시
+        String formattedOptionTotalPrice = String.format("￦ %,d", optionTotalPriceInt);
+        optionTotalPrice.setText(formattedOptionTotalPrice);
+    }
+
+    private void updateButtonsVisibility() {
+        if (quantityInt > 1) {
+            minusButton.setImageResource(R.drawable.ic_minus); // quantity가 2 이상이면 minus 아이콘 변경
+        } else {
+            minusButton.setImageResource(R.drawable.ic_minus_default); // quantity가 1일 때는 기본 아이콘으로 변경
+        }
     }
 
     private List<OptionDTO> getOptionData() {
