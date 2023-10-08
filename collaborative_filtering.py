@@ -3,16 +3,16 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # 10명의 사용자가 10개의 음식 중에서 선호하는 음식 (사용자 ID, 음식 ID)
 user_food_choices = np.array([
-    [1, 3, 7, 10],  # 사용자 1이 3, 7, 10번 음식을 선택
-    [2, 1, 4, 9],  # 사용자 2가 1, 4, 9번 음식을 선택
-    [3, 2, 6, 8],  # 사용자 3이 2, 6, 8번 음식을 선택
-    [4, 3, 7, 9],
-    [5, 2, 8, 10],
-    [6, 1, 3, 8],
-    [7, 2, 5, 6],
-    [8, 2, 3, 4],
-    [9, 5, 6, 7],
-    [10, 1, 5, 10]  # 사용자 10이 1, 5, 10번 음식을 선택
+    [1, 1, 2, 3, 7, 10],  # 사용자 1이 3, 7, 10번 음식을 선택
+    [2, 1, 4, 7, 8, 9],  # 사용자 2가 1, 4, 9번 음식을 선택
+    [3, 2, 6, 8, 9, 10],  # 사용자 3이 2, 6, 8번 음식을 선택
+    [4, 1, 2, 3, 7, 9],
+    [5, 2, 3, 4, 8, 10],
+    [6, 1, 3, 4, 7, 8],
+    [7, 2, 3, 5, 6, 10],
+    [8, 2, 3, 4, 5, 7],
+    [9, 5, 6, 7, 8, 9],
+    [10, 1, 3, 4, 5, 10]  # 사용자 10이 1, 5, 10번 음식을 선택
 ])
 
 # 사용자-음식 매트릭스 생성 (10명의 사용자, 10개의 음식)
@@ -37,15 +37,11 @@ similarities = user_similarity[target_user_id - 1]
 predicted_choices = np.dot(similarities, user_food_matrix)
 
 
+# 예측 선택 여부를 0과 1 사이의 값으로 제한
+predicted_choices = np.clip(predicted_choices, 0, 1)
 
-# 한가지추천
 
-# 이미 선택한 음식은 제외하고 추천
-non_chosen_foods = np.where(target_user_choices == 0)[0]
-recommendations = [(food_id + 1, predicted_choices[food_id]) for food_id in non_chosen_foods]
-recommendations.sort(key=lambda x: x[1], reverse=True)
 
-"""
 # 이미 선택한 음식은 제외하고 상위 세 개의 음식을 추천
 non_chosen_foods = np.where(target_user_choices == 0)[0]
 recommendations = [(food_id + 1, predicted_choices[food_id]) for food_id in non_chosen_foods]
@@ -53,22 +49,10 @@ recommendations.sort(key=lambda x: x[1], reverse=True)
 top_recommendations = recommendations[:3]
 
 
-"""
-
-# 한가지추천
-
-if recommendations:
-    top_recommendation = recommendations[0]
-    print(f"사용자 1번에게 추천하는 음식: 음식 {top_recommendation[0]}")
-else:
-    print("더 이상 추천할 음식이 없습니다.")
 
 
-
-"""
 print("사용자 1번에게 추천하는 음식 (상위 세 개):")
 for i, (food_id, score) in enumerate(top_recommendations):
-    print(f"{i + 1}. 음식 {food_id}: 예측 선택 여부 - {score:.2f}")
+    print(f"{i + 1}. 음식 {food_id}: 예측 선택 여부 : {score:.2f}")
 
-"""
 

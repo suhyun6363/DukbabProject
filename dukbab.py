@@ -1,46 +1,86 @@
 import requests
-from bs4 import BeautifulSoup
-
-url = "https://www.duksung.ac.kr/diet/schedule.do"
-
-html = requests.get(url, verify=False)
-print(url)
-if html.status_code != 200:
-    print('페이지를 불러오는데 문제가 발생했습니다.')
-else:
-    soup = BeautifulSoup(html.text, 'html.parser')
-    menus = soup.select(' div.table-responsive >  #schedule-table > tbody > tr')  # 메뉴 정보가 있는 테이블의 CSS 선택자를 사용하여 데이터 추출
-    print("추출된 list :", len(menus))  
-    print("내용 :", menus)  
-    
-    #customer_container
-    #customer_container > div.table-responsive
-
-    #schedule-table > tbody > tr:nth-child(1) > td:nth-child(2)
-
-    results = []
-    for menu in menus:
-        # 각 행에서 메뉴 정보 추출
-        td_list = menus.find_all('td')
-        monday = td_list[0].text
-        tuesday = td_list[1].text
-        wednesday = td_list[2].text
-        thursday = td_list[3].text
-        friday = td_list[4].text
+import socket
+from datetime import datetime, timedelta
+import time
 
 
-        # 추출한 정보를 리스트에 추가
-        results.append({
-            '월요일': monday,
-            '화요일': tuesday,
-            '수요일': wednesday,
-            '목요일': thursday,
-            '금요일': friday
+class DietItem:
+    def __init__(self, diet_date, diet_title, sdow):
+        self.diet_date = diet_date
+        self.diet_title = diet_title
+        self.sdow = sdow
 
-        })
 
-    # 결과 출력
-    for result in results:
-        print(result)
+def fetch_diet_schedule(start_date, end_date):
+    url = f"https://www.duksung.ac.kr/diet/ajax/scheduleList.do?startDate={start_date}&endDate={end_date}&cd=R01"
 
-# 결과를 활용하여 필요한 처리를 진행하실 수 있습니다.
+    try:
+        response = requests.post(url)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("resultCode") == "0":
+            diet_list = data.get("list", [])
+            diet_items = []
+
+            for item in diet_list:
+                diet_date = item.get("DIET_DATE", "")
+                sdow = item.get("SDOW", "")
+                diet_title = item.get("DIET_TITLE", "")
+                diet_item = DietItem(diet_date, diet_title, sdow)
+                diet_items.append(diet_item)
+
+            return diet_items
+        else:
+            print("API 요청이 실패하였습니다.")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"API 요청 중 오류 발생: {str(e)}")
+        return None
+
+
+def start_server():
+    host = '192.168.219.101'  # 호스트 ip를 적어주세요
+    port = 8080  # 포트번호를 임의로 설정해주세요
+
+    server_sock = socket.socket(socket.AF_INET)
+    server_sock.bind((host, port))
+    server_sock.listen(1)
+    print("기다리는 중..")
+    out_data = int(10)
+
+    while True:
+        client_sock, addr = server_sock.accept()
+
+        if client_sock:
+            print('Connected by?!', addr)
+            in_data = client_sock.recv(1024)
+            print('rcv :', in_data.decode("utf-8"), len(in_data))
+
+            while in_data:
+                diet_items = fetch_diet_schedule(start_date, end_date)
+                if diet_items:
+                    for item in diet_items:
+                        client_sock.send(
+                            f"날짜: {item.diet_date}, 요일: {item.sdow}, 식단: {item.diet_title}".encode("utf-8"))
+                        print(f"send: 날짜: {item.diet_date}, 요일: {item.sdow}, 식단: {item.diet_title}")
+                else:
+                    client_sock.send("식단 정보를 가져올 수 없습니다.".encode("utf-8"))
+                    print("send: 식단 정보를 가져올 수 없습니다.")
+
+                time.sleep(2)
+
+        client_sock.close()
+        server_sock.close()
+
+
+if __name__ == '__main__':
+    # 다음 주 월요일부터 일요일까지의 날짜 계산
+    today = datetime.today()
+    next_monday = today + timedelta(days=(7 - today.weekday()))
+    next_friday = next_monday + timedelta(days=4)
+
+    start_date = next_monday.strftime('%Y-%m-%d')
+    end_date = next_friday.strftime('%Y-%m-%d')
+
+    start_server()

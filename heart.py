@@ -1,5 +1,10 @@
+from flask import Flask,render_template
 from collections import defaultdict
 from heapq import nlargest
+from flask import Flask, jsonify
+
+app = Flask(__name__, template_folder='templates')
+
 
 # 10명의 사용자가 선택한 숫자 목록을 나타내는 딕셔너리
 users = {
@@ -27,6 +32,11 @@ for user, numbers in users.items():
     top_recommendations = nlargest(3, similarities, key=similarities.get)
     recommendations[user] = top_recommendations
 
-# 모든 사용자의 추천 숫자 출력
-for user, rec_numbers in recommendations.items():
-    print(f"{user}의 추천 숫자: {rec_numbers}")
+@app.route('/filtering')
+def index():
+    json_recommendations = {user: numbers for user, numbers in recommendations.items()}
+    return jsonify(json_recommendations)
+
+
+if __name__ == '__main__':
+    app.run(host='192.168.219.101', port=5001, debug=True)

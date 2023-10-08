@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>추천 숫자</title>
+</head>
+<body>
+    <h1>사용자별 추천 숫자</h1>
+    {% for user, rec_numbers in recommendations.items() %}
+        <h2>{{ user }}의 추천 숫자:</h2>
+        <ul>
+            {% for number in rec_numbers %}
+                <li>{{ number }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>
