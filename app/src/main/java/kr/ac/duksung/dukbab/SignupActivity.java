@@ -38,24 +38,30 @@ public class SignupActivity extends AppCompatActivity {
             Toast.makeText(this, "빈칸을 모두 채워주세요.", Toast.LENGTH_SHORT).show();
         } else if (!username.endsWith("duksung.ac.kr")) { // "duksung.ac.kr"로 끝나지 않을 때
             Toast.makeText(this, "덕성메일을 입력해주세요.", Toast.LENGTH_SHORT).show();
-        } else if (password.equals(confirmPassword)) {
-            // 비밀번호 확인이 일치할 때 회원가입 처리
+        } else {
             // 여기에서 실제 회원가입 로직을 구현하세요.
             // 데이터베이스에 사용자 정보를 저장하는 코드를 추가
             Database database = Database.getInstance();
             database.open(this);
-            long result = database.insert(username, password, nickname);
-            database.close();
 
-            if (result != -1) {
-                Toast.makeText(this, "회원가입 성공", Toast.LENGTH_SHORT).show();
-                finish(); // 회원가입 액티비티 종료
-            } else {
+            // Check if the username already exists in the database
+            boolean userExists = database.checkUserExists(username);
+            if (userExists) {
                 Toast.makeText(this, "이미 존재하는 이메일입니다.", Toast.LENGTH_SHORT).show();
-            }
+                database.close();
+            } else if (password.equals(confirmPassword)) {
+                long result = database.insert(username, password, nickname);
+                database.close();
 
-        } else {
-            Toast.makeText(this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                if (result != -1) {
+                    Toast.makeText(this, "회원가입 성공", Toast.LENGTH_SHORT).show();
+                    finish(); // 회원가입 액티비티 종료
+                } else {
+                    Toast.makeText(this, "회원가입 실패. 다시 시도하세요.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

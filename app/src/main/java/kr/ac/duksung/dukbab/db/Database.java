@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
+
+import java.util.List;
 
 public class Database{
     private static Database instance;
@@ -112,6 +115,28 @@ public class Database{
         }
     }
 
+    // User.db 데이터베이스에서 이메일 존재 여부를 확인하는 메서드
+    public boolean checkUserExists(String email) {
+        String[] columns = {DBOpenHelper.COLUMN_EMAIL};
+        String selection = DBOpenHelper.COLUMN_EMAIL + "=?";
+        String[] selectionArgs = {email};
+
+        Cursor cursor = null;
+
+        try {
+            cursor = mDB.query(DBOpenHelper.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+            return cursor != null && cursor.getCount() > 0;
+        } catch (SQLException e) {
+            Log.e("Database", "Error checking user existence: " + e.getMessage());
+            return false;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+
     // 리뷰 검색 (Review.db)
     public Cursor searchReview(String email) {  // 닉네임은 중복가능해서 email로 검색함
         String[] columns = {
@@ -148,7 +173,7 @@ public class Database{
                 OrderDBOpenHelper.COLUMN_EMAIL,
                 OrderDBOpenHelper.COLUMN_NICKNAME,
                 OrderDBOpenHelper.COLUMN_ORDER_DATE,
-                OrderDBOpenHelper.COLUMN_SELECTED_RESTAURANT,
+                //OrderDBOpenHelper.COLUMN_SELECTED_RESTAURANT,
                 OrderDBOpenHelper.COLUMN_STATUS,
                 OrderDBOpenHelper.COLUMN_TOTAL_PRICE,
                 OrderDBOpenHelper.COLUMN_PAYMENT_METHOD
@@ -218,35 +243,6 @@ public class Database{
         }
     }
 
-    // 장바구니 데이터 저장하는 메서드
-    // 후에 cartActivity 생기면 옮길 예정
-    public long insertCart(String email, String nickname, String selectedRestaurant, String menuName, String menuOptionId, int quantity, String cartCreatedDate) {
-        mCartDB.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            values.put(CartDBOpenHelper.COLUMN_EMAIL, email);
-            values.put(CartDBOpenHelper.COLUMN_NICKNAME, nickname);
-            values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
-            values.put(CartDBOpenHelper.COLUMN_MENU_NAME, menuName);
-            values.put(CartDBOpenHelper.COLUMN_MENU_OPTION_ID, menuOptionId);
-            values.put(CartDBOpenHelper.COLUMN_QUANTITY, quantity);
-            values.put(CartDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate);
-
-            long result = mCartDB.insert(CartDBOpenHelper.TABLE_NAME, null, values);
-
-            if (result != -1) {
-                mCartDB.setTransactionSuccessful();
-            }
-            return result;
-        } catch (SQLException e) {
-            Log.e("Database", "Error inserting cart data: " + e.getMessage());
-            return -1;
-        } finally {
-            mCartDB.endTransaction();
-        }
-    }
-
-
     // 주문 데이터를 저장하는 메서드
     // 후에 orderActivity 생기면 옮길 예정
     public long insertOrder(String email, String nickname, String orderDate, String selectedRestaurant, String status, String totalPrice, String paymentMethod) {
@@ -256,7 +252,7 @@ public class Database{
             values.put(OrderDBOpenHelper.COLUMN_EMAIL, email);
             values.put(OrderDBOpenHelper.COLUMN_NICKNAME, nickname);
             values.put(OrderDBOpenHelper.COLUMN_ORDER_DATE, orderDate);
-            values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
+            //values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
             values.put(OrderDBOpenHelper.COLUMN_STATUS, status);
             values.put(OrderDBOpenHelper.COLUMN_TOTAL_PRICE, totalPrice);
             values.put(OrderDBOpenHelper.COLUMN_PAYMENT_METHOD, paymentMethod);

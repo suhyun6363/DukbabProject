@@ -1,11 +1,13 @@
 package kr.ac.duksung.dukbab.Home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -18,14 +20,24 @@ import java.util.List;
 import kr.ac.duksung.dukbab.GridSpaceItemDecoration;
 import kr.ac.duksung.dukbab.R;
 
-public class MenuViewFragment extends Fragment {
+public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapterListener {
+    public static final String TAG = "MenuViewFragment";
     private static final String ARG_TAB_TEXT = "tab_text";
 
     private ImageView imageView;
     private TextView tabText;
     private RecyclerView recyclerView, cartView;
     private MenuAdapter menuAdapter;
-
+    public List<CartDTO> cartList = new ArrayList<>();
+    private List<String> newSelectedOptionList = new ArrayList<>();
+    private CartDTO cartItem;
+    //private MenuViewListener menuViewListener;
+    public OptionDrawerFragment optionDrawerFragment;
+    /*
+        public interface MenuViewListener {
+            void cartItemToHomeFragment(CartDTO cartItem);
+        }
+      */
     // MenuViewFragment를 생성하고 필요한 데이터를 전달하는 정적 메서드
     public static MenuViewFragment newInstance(String tabText) {
         MenuViewFragment fragment = new MenuViewFragment();
@@ -36,6 +48,11 @@ public class MenuViewFragment extends Fragment {
         return fragment;
     }
 
+    public void openOptionDrawerFragment(MenuDTO menu) {
+        optionDrawerFragment = OptionDrawerFragment.newInstance(menu);
+        optionDrawerFragment.show(getParentFragmentManager(), OptionDrawerFragment.TAG);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menuview, container, false);
@@ -43,7 +60,6 @@ public class MenuViewFragment extends Fragment {
         imageView = view.findViewById(R.id.congestionImg);
         tabText = view.findViewById(R.id.tabText);
         recyclerView = view.findViewById(R.id.menuRecyclerView);
-        cartView = view.findViewById(R.id.cart);
 
 
         // 전달된 데이터를 가져와서 화면에 설정
@@ -56,16 +72,13 @@ public class MenuViewFragment extends Fragment {
             List<MenuDTO> menuList = getMenuData();
 
             // RecyclerView에 메뉴 데이터 설정
-            menuAdapter = new MenuAdapter(menuList, getParentFragmentManager()); //
+            menuAdapter = new MenuAdapter(menuList); //
+            menuAdapter.setMenuAdapterListener(this);
             recyclerView.setAdapter(menuAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
             recyclerView.addItemDecoration(new GridSpaceItemDecoration(3, 28));
         }
-/*
-        CartAdapter cartAdapter = new CartAdapter(cartItemList);
-        cartView.setAdapter(cartAdapter);
-        cartView.setLayoutManager(new LinearLayoutManager(getContext()));
-*/
+
         return view;
     }
 

@@ -7,8 +7,8 @@ public class OptionDTO {
     private List<String> optionContents; // 세부 옵션 목록
 
     public OptionDTO(String name, List<String> optionContents) {
-        this.name = name;
-        this.optionContents = optionContents;
+        this.name = name; // 옵션명
+        this.optionContents = optionContents; //옵션 내용
     }
 
     public String getName() {
