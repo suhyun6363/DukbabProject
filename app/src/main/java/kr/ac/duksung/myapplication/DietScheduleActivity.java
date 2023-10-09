@@ -74,8 +74,8 @@ public class DietScheduleActivity extends AppCompatActivity {
                 TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
         textView.setGravity(Gravity.CENTER);
-        String text = "날짜: " + dietItem.get날짜() +
-                "\n요일: " + dietItem.get요일() +
+        String text =  dietItem.get날짜() +
+                " " + dietItem.get요일() +
                 "\n식단: " + dietItem.get식단() + "\n";
         textView.setText(text);
         textView.setPadding(8, 8, 8, 8);
