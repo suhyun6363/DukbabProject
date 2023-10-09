@@ -36,6 +36,7 @@ public class HomeFragment extends Fragment {
         viewPager = view.findViewById(R.id.viewPager);
 
         // 탭 추가
+        tabLayout.addTab(tabLayout.newTab().setText("추천"));
         tabLayout.addTab(tabLayout.newTab().setText("오늘의 메뉴"));
         tabLayout.addTab(tabLayout.newTab().setText("마라탕"));
         tabLayout.addTab(tabLayout.newTab().setText("분식"));

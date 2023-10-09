@@ -58,6 +58,9 @@ public class MenuViewFragment extends Fragment {
 
             List<MenuDTO> menuList = getMenuData(storeId);
             switch (storeId) {
+                case 0:
+                    tabText.setText("추천");
+                    break;
                 case 1:
                     tabText.setText("오늘의 메뉴");
                     break;
