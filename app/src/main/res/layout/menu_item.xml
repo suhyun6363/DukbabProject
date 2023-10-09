@@ -29,10 +29,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cardViewMember"
-        android:layout_marginLeft="14dp"
+        android:layout_marginLeft="6dp"
         android:layout_marginTop="12dp"
         android:layout_weight="1"
-        android:gravity="center"
         android:orientation="vertical"
         android:textAlignment="center">
 
@@ -42,7 +41,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="메뉴 이름"
-            android:textAlignment="center"
             android:textColor="#000"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -53,7 +51,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="￦ 10,000"
-            android:textAlignment="center"
             android:textColor="#000"
             android:textSize="14sp"
             android:textStyle="bold" />

@@ -30,7 +30,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     public void onBindViewHolder(ReviewViewHolder holder, int position) {
         if (cursor.moveToPosition(position)) {
             // 커서에서 데이터를 추출하고 ViewHolder 뷰에 바인딩합니다.
-            String restaurantName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_SELECTED_RESTAURANT));
+            String storeId = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_ID)); /////
             String menuName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_MENU_NAME));
             float rating = cursor.getFloat(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_RATING));
             String reviewContent = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CONTENT));
@@ -40,7 +40,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
 
             // 데이터를 ViewHolder 뷰에 바인딩합니다.
-            holder.restaurantNameTextView.setText(restaurantName);
+            holder.restaurantNameTextView.setText(storeId);
             holder.menuNameTextView.setText(menuName);
             holder.ratingTextView.setText(String.valueOf(rating));
             holder.reviewContentTextView.setText(reviewContent);

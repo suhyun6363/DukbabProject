@@ -12,10 +12,14 @@ import java.util.List;
 
 import kr.ac.duksung.dukbab.R;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> implements OptionDrawerFragment.BtnaddToCartListener {
 
     private List<CartDTO> cartList;
     private int totalPrice = 0;
+
+    public void nodifyChange() {
+        notifyDataSetChanged();
+    }
 
     public CartAdapter(List<CartDTO> cartList) {
         this.cartList = cartList;

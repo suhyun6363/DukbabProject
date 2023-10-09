@@ -26,8 +26,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -53,6 +51,15 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     private boolean isHeartSelected = false;
     private CartDTO cartItem;
     private int quantityInt = 1;
+    private BtnaddToCartListener btnaddToCartListener;
+
+    public interface BtnaddToCartListener {
+        void nodifyChange();
+    }
+
+    public void setBtnaddToCartListener(BtnaddToCartListener btnaddToCartListener) {
+        this.btnaddToCartListener = btnaddToCartListener;
+    }
 
     public static OptionDrawerFragment newInstance(MenuDTO menu) {
         OptionDrawerFragment fragment = new OptionDrawerFragment();
@@ -96,6 +103,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             menuName.setText(menu.getName());
             menuPrice.setText("￦ " + menu.getPrice());
             optionTotalPrice.setText("￦ " + menu.getPrice());
+
             List<OptionDTO> optionList = getOptionData();
 
             OptionAdapter optionAdapter = new OptionAdapter(optionList);
@@ -136,7 +144,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         ContentValues values = new ContentValues();
                         values.put(CartDBOpenHelper.COLUMN_EMAIL, username);
                         values.put(CartDBOpenHelper.COLUMN_NICKNAME, nickname);
-                        //values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
+                        //values.put(CartDBOpenHelper.COLUMN_STORE_ID, storeId); /////
                         values.put(CartDBOpenHelper.COLUMN_MENU_NAME, cartItem.getMenuName());
                         values.put(CartDBOpenHelper.COLUMN_MENU_OPTION, TextUtils.join(", ", cartItem.getSelectedOptions())); // 옵션을 쉼표로 구분하여 저장
                         values.put(CartDBOpenHelper.COLUMN_MENU_PRICE, cartItem.getMenuPrice());
@@ -147,6 +155,10 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
 
                         db.close();
                         showCartConfirmationDialog();
+
+                        if(btnaddToCartListener != null)
+                            btnaddToCartListener.nodifyChange();
+
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                         builder.setMessage("옵션을 선택해주세요.");
@@ -161,7 +173,6 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                     dismiss(); // 옵션창 닫기
                 }
             });
-
 
             // "주문하기" 버튼 클릭 이벤트 처리
             btnCartToOrder.setOnClickListener(new View.OnClickListener() {

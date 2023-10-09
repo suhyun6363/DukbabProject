@@ -15,7 +15,7 @@ public class OrderDBOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_NICKNAME = "nickname";
     public static final String COLUMN_ORDER_DATE = "orderDate";
-    //public static final String COLUMN_SELECTED_RESTAURANT = "selectedRestaurant";
+    public static final String COLUMN_STORE_ID = "storeId";
     public static final String COLUMN_STATUS = "status";
     public static final String COLUMN_TOTAL_PRICE = "totalPrice";
     public static final String COLUMN_PAYMENT_METHOD = "paymentMethod";
@@ -33,7 +33,7 @@ public class OrderDBOpenHelper extends SQLiteOpenHelper {
                 COLUMN_EMAIL + " TEXT, " +
                 COLUMN_NICKNAME + " TEXT, " +
                 COLUMN_ORDER_DATE + " TEXT, " +
-                //COLUMN_SELECTED_RESTAURANT + " TEXT, " +
+                COLUMN_STORE_ID + " TEXT, " +
                 COLUMN_STATUS + " TEXT, " +
                 COLUMN_TOTAL_PRICE + " TEXT, " +
                 COLUMN_PAYMENT_METHOD + " TEXT)";

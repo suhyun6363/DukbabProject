@@ -19,14 +19,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import android.widget.Toast;
-
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
+import kr.ac.duksung.dukbab.db.Database;
 
 public class HomeFragment extends Fragment {
     private TabLayout tabLayout;
@@ -67,7 +66,6 @@ public class HomeFragment extends Fragment {
         // RecyclerView에 어댑터 설정
         cartAdapter = new CartAdapter(cartList);
         cartRecyclerView.setAdapter(cartAdapter);
-        //cartView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // RecyclerView에 레이아웃 매니저 설정
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -78,13 +76,13 @@ public class HomeFragment extends Fragment {
         removeAll = view.findViewById(R.id.removeAll);
         orderBtn = view.findViewById(R.id.order_btn);
 
-        // 탭 추가
+        // 추천 탭 추가
+        tabLayout.addTab(tabLayout.newTab().setText("추천"));
         tabLayout.addTab(tabLayout.newTab().setText("오늘의 메뉴"));
         tabLayout.addTab(tabLayout.newTab().setText("마라탕"));
         tabLayout.addTab(tabLayout.newTab().setText("분식"));
         tabLayout.addTab(tabLayout.newTab().setText("수제돈까스"));
-        tabLayout.addTab(tabLayout.newTab().setText("해장국"));
-        tabLayout.addTab(tabLayout.newTab().setText("일식"));
+        tabLayout.addTab(tabLayout.newTab().setText("파스타"));
 
         // ViewPager에 어댑터 연결
         MenuPageAdapter pageAdapter = new MenuPageAdapter(requireActivity(), tabLayout);
@@ -161,6 +159,26 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+
+        // Store 데이터 삽입
+        Database database = Database.getInstance();
+        database.openStoreDB(requireContext()); // Store 데이터베이스 열기
+        database.getStoreData(); // Store 데이터 조회
+
+        //중복 데이터 삭제
+        database.deleteDuplicateStores();
+
+        // 가게 정보 추가
+        // 혼잡도 추가할 예정
+        database.addStore(1,"오늘의 메뉴", "Actual congestion info for 오늘의 메뉴");
+        database.addStore(2,"마라탕", "Actual congestion info for 마라탕");
+        database.addStore(3,"분식", "Actual congestion info for 분식");
+        database.addStore(4,"수제돈까스", "Actual congestion info for 수제돈까스");
+        database.addStore(5,"파스타", "Actual congestion info for 파스타");
+
+        // Store 데이터베이스 닫기
+        database.closeStoreDB();
+
         return view;
     }
 
@@ -177,4 +195,3 @@ public class HomeFragment extends Fragment {
         cartAdapter.notifyDataSetChanged();
     }
 }
-

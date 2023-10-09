@@ -14,18 +14,18 @@ import kr.ac.duksung.dukbab.Home.CartDTO;
 
 public class CartDBOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "Cart.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 3;
     public static final String TABLE_NAME = "Cart";
 
     // Cart 테이블의 컬럼 정의
     public static final String COLUMN_CART_ID = "cartId";
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_NICKNAME = "nickname";
-    //public static final String COLUMN_SELECTED_RESTAURANT = "selectedRestaurant";
+    public static final String COLUMN_STORE_ID = "storeId";   //// storeId로 변경
     public static final String COLUMN_MENU_NAME = "menuName";
     public static final String COLUMN_MENU_OPTION = "menuOption"; // 메뉴 옵션
     public static final String COLUMN_MENU_PRICE = "menuPrice"; // 메뉴 가격
-    public static final String COLUMN_MENU_QUANTITY = "menuQuantity";
+    public static final String COLUMN_MENU_QUANTITY = "menuQuantity"; ////
     public static final String COLUMN_CART_CREATED_DATE = "cartCreatedDate";
 
     public CartDBOpenHelper(Context context) {
@@ -39,11 +39,11 @@ public class CartDBOpenHelper extends SQLiteOpenHelper {
                 COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_EMAIL + " TEXT, " +
                 COLUMN_NICKNAME + " TEXT, " +
-                //COLUMN_SELECTED_RESTAURANT + " TEXT, " +
+                COLUMN_STORE_ID + " INTEGER, " + //// storeId integer로 수정
                 COLUMN_MENU_NAME + " TEXT, " +
                 COLUMN_MENU_OPTION + " TEXT, " +
                 COLUMN_MENU_PRICE + " TEXT, " +
-                COLUMN_MENU_QUANTITY + " INTEGER, " +
+                COLUMN_MENU_QUANTITY + " INTEGER, " + ////
                 COLUMN_CART_CREATED_DATE + " TEXT);";
         db.execSQL(createTableQuery);
     }
@@ -65,7 +65,7 @@ public class CartDBOpenHelper extends SQLiteOpenHelper {
         String[] columns = {
                 CartDBOpenHelper.COLUMN_MENU_NAME,
                 CartDBOpenHelper.COLUMN_MENU_PRICE,
-                CartDBOpenHelper.COLUMN_MENU_QUANTITY,
+                CartDBOpenHelper.COLUMN_MENU_QUANTITY, ////
                 CartDBOpenHelper.COLUMN_MENU_OPTION
         };
 
@@ -75,7 +75,7 @@ public class CartDBOpenHelper extends SQLiteOpenHelper {
             do {
                 String menuName = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_NAME));
                 String menuPrice = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_PRICE));
-                int menuQuantity = cursor.getInt(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_QUANTITY));
+                int menuQuantity = cursor.getInt(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_QUANTITY)); ////
                 String menuOption = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_OPTION));
 
                 List<String> selectedOptionsList = new ArrayList<>(Arrays.asList(menuOption.split(", ")));

@@ -23,7 +23,6 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.content.Intent;
 
-
 import kr.ac.duksung.dukbab.Home.CartDTO;
 import kr.ac.duksung.dukbab.Home.MenuDTO;
 import kr.ac.duksung.dukbab.navigation.HeartFragment;
@@ -80,6 +79,7 @@ public class HomeActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_mypage:
                     replaceFragment(mypageFragment, "MypageFragment");
+
                     return true;
             }
             return false;

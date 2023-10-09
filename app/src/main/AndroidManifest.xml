@@ -20,7 +20,6 @@
             android:name=".navigation.ReviewwriteActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Dialog" />
-
         <activity
             android:name=".SignupActivity"
             android:exported="false" />
