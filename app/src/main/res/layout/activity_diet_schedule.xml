@@ -5,17 +5,41 @@
     android:layout_height="match_parent"
     tools:context=".DietScheduleActivity">
 
-    <LinearLayout
+    <TableLayout
+        android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:stretchColumns="*">
 
-        <TextView
-            android:id="@+id/textView2"
+        <!-- Header Row -->
+        <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp" />
+            android:background="#f0f0f0"
+            android:gravity="center">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="오늘의 메뉴A"
+                android:padding="8dp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="오늘의 메뉴B"
+                android:padding="8dp"
+                android:gravity="center" />
+
+
+
+        </TableRow>
+
+        <!-- Data Rows will be added dynamically -->
+
+    </TableLayout>
 </ScrollView>

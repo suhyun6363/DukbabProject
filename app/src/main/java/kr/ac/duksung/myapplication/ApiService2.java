@@ -8,5 +8,6 @@ import retrofit2.http.GET;
 public interface ApiService2 {
     @GET("filtering")
     Call<RecommendItem> getRecommendations();
+
 }
 
