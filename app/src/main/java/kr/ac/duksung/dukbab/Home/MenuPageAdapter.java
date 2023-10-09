@@ -16,11 +16,11 @@ public class MenuPageAdapter extends FragmentStateAdapter {
         this.tabLayout = tabLayout;
         this.storeIds = new int[]{
                 0,
-                1, // 오늘의 메뉴의 경우, 원하는 가게의 storeId로 변경
-                2, // 마라탕의 경우, 원하는 가게의 storeId로 변경
-                3, // 분식의 경우, 원하는 가게의 storeId로 변경
-                4, // 수제돈까스의 경우, 원하는 가게의 storeId로 변경
-                5  // 파스타의 경우, 원하는 가게의 storeId로 변경
+                1, // 오늘의 메뉴
+                2, // 마라탕
+                3, // 분식
+                4, // 수제돈까스
+                5  // 파스타
         };
     }
 

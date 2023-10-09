@@ -242,7 +242,7 @@ public class Database{
         String selection = MenuDBOpenHelper.COLUMN_STORE_ID + "=?";
         String[] selectionArgs = {String.valueOf(storeId)};
         return db.query(MenuDBOpenHelper.DB_TABLE_MENU, columns, selection, selectionArgs, null, null, null);
-    }
+    }/*
 
     // 메뉴 ID 가져오기 (메뉴 이름으로)
     public int getMenuIdFromDatabase(String menuName) {
@@ -291,7 +291,7 @@ public class Database{
 
         db.update(MenuDBOpenHelper.DB_TABLE_MENU, values, whereClause, whereArgs);
         db.close();
-    }
+    } */
 // ----------------------------------------------------------------
 
     // 이메일 검색
