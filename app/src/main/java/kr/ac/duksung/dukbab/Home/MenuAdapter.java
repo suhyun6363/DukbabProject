@@ -49,7 +49,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             public void onClick(View v) {
                 // 옵션 선택 슬라이딩 드로어 열기
                 if(menuAdapterListener != null)
-                    menuAdapterListener.openOptionDrawerFragment(menu);
+                menuAdapterListener.openOptionDrawerFragment(menu);
             }
         });
     }

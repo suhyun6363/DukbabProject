@@ -101,6 +101,10 @@ public class OptionAdapter extends RecyclerView.Adapter<ViewHolder> implements O
         return selectedOptionList;
     }
 
+    public List<String> getSelectedOptionList() {
+        return selectedOptionList;
+    }
+
     // ViewHolder 클래스
     public static class OptionViewHolder extends ViewHolder {
         public TextView optionName;

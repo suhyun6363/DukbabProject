@@ -13,7 +13,7 @@
         android:id="@+id/navigation_heart"
         android:title="찜"
         android:textStyle="bold"
-        android:icon="@drawable/ic_heart" />
+        android:icon="@drawable/ic_heart_default" />
     <item
         android:id="@+id/navigation_mypage"
         android:title="마이페이지"

@@ -28,16 +28,13 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
     private TextView tabText;
     private RecyclerView recyclerView, cartView;
     private MenuAdapter menuAdapter;
+
     public List<CartDTO> cartList = new ArrayList<>();
     private List<String> newSelectedOptionList = new ArrayList<>();
     private CartDTO cartItem;
     //private MenuViewListener menuViewListener;
     public OptionDrawerFragment optionDrawerFragment;
-    /*
-        public interface MenuViewListener {
-            void cartItemToHomeFragment(CartDTO cartItem);
-        }
-      */
+
     // MenuViewFragment를 생성하고 필요한 데이터를 전달하는 정적 메서드
     public static MenuViewFragment newInstance(String tabText) {
         MenuViewFragment fragment = new MenuViewFragment();
@@ -61,7 +58,6 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         tabText = view.findViewById(R.id.tabText);
         recyclerView = view.findViewById(R.id.menuRecyclerView);
 
-
         // 전달된 데이터를 가져와서 화면에 설정
         Bundle args = getArguments();
         if (args != null) {
@@ -78,7 +74,6 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
             recyclerView.addItemDecoration(new GridSpaceItemDecoration(3, 28));
         }
-
         return view;
     }
 

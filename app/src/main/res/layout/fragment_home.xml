@@ -25,7 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
-        android:layout_marginLeft="16dp" />
+        android:layout_marginLeft="16dp"
+        />
 
     <LinearLayout
         android:id="@+id/cart_container"
@@ -33,7 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cart"
@@ -72,11 +72,11 @@
                 android:layout_marginEnd="10dp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/allDelete"
+                app:layout_constraintBottom_toTopOf="@+id/removeAll"
                 app:layout_constraintTop_toBottomOf="@+id/totalCount" />
 
             <TextView
-                android:id="@+id/allDelete"
+                android:id="@+id/removeAll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -102,8 +102,5 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
     </LinearLayout>
 </RelativeLayout>

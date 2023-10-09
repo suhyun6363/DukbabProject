@@ -2,7 +2,6 @@ package kr.ac.duksung.dukbab;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         if (isLoggedIn()) {
             autoLogin();
         }
-
     }
 
     public void onLoginButtonClick(View view) {

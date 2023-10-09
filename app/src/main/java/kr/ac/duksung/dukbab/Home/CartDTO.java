@@ -3,26 +3,29 @@ package kr.ac.duksung.dukbab.Home;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CartDTO implements Parcelable{
     //private int menuId;
     private String menuName;
     private String menuPrice;
-    //private int menuQuantity;
+    private int menuQuantity;
     private List<String> selectedOptions;
 
-    public CartDTO(String menuName, String menuPrice, List<String> selectedOptions) {
+    public CartDTO(String menuName, String menuPrice, int menuQuantity, List<String> selectedOptions) {
         //this.menuId = menuId;
         this.menuName = menuName;
         this.menuPrice = menuPrice;
-        //this.menuQuantity = menuQuantity;
+        this.menuQuantity = menuQuantity;
         this.selectedOptions = selectedOptions;
     }
 
     public String getMenuName() {
         return menuName;
+    }
+
+    public int getMenuQuantity() {
+        return menuQuantity;
     }
 
     public String getMenuPrice() {

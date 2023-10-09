@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars" />
-        <!--android:src="@drawable/menu_image_placeholder"-->
+
     </androidx.cardview.widget.CardView>
 
     <!-- 메뉴 이름과 가격을 표시할 수 있는 수직 레이아웃 -->

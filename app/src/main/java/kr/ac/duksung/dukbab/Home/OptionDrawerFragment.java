@@ -1,10 +1,12 @@
 package kr.ac.duksung.dukbab.Home;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,19 +20,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
-import java.text.SimpleDateFormat;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.ArrayList;
+import java.util.List;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import kr.ac.duksung.dukbab.HomeActivity;
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
@@ -39,15 +43,14 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     public static final String TAG = "OptionDrawerFragment";
 
     private MenuDTO menu;
-    private ImageView menuImg;
-    private TextView menuName, menuPrice;
+    private ImageView menuImg, minusButton, plusButton, heartButton;
+    private TextView menuName, menuPrice, quantityTextView, optionTotalPrice;
     private RecyclerView optionView;
     private List<String> selectedOptionsList = new ArrayList<>();
     private List<String> newSelectedOptionList = new ArrayList<>();
     private boolean isHeartSelected = false;
     private CartDTO cartItem;
-
-
+    private int quantityInt = 1;
 
     public static OptionDrawerFragment newInstance(MenuDTO menu) {
         OptionDrawerFragment fragment = new OptionDrawerFragment();
@@ -75,10 +78,12 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         //TextView detailContent = view.findViewById(R.id.detailContent);
         optionView = view.findViewById(R.id.optionView);
         Button btnAddToCart = view.findViewById(R.id.cart_btn);
-        Button btnCartToOrder = view.findViewById(R.id.order_btn);
         //drawerFooter = view.findViewById(R.id.drawerFooter);
-        ImageView heart = view.findViewById(R.id.heart);
-
+        heartButton = view.findViewById(R.id.heart);
+        minusButton = view.findViewById(R.id.minus);
+        quantityTextView = view.findViewById(R.id.quantity);
+        plusButton = view.findViewById(R.id.plus);
+        optionTotalPrice = view.findViewById(R.id.optionTotalPrice);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -87,11 +92,10 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             menuImg.setImageResource(menu.getImageResourceId());
             menuName.setText(menu.getName());
             menuPrice.setText("￦ " + menu.getPrice());
-
+            optionTotalPrice.setText("￦ " + menu.getPrice());
             List<OptionDTO> optionList = getOptionData();
 
             OptionAdapter optionAdapter = new OptionAdapter(optionList);
-            //OptionContentAdapter optionContentAdapter = new OptionContentAdapter(optionList.)
             optionView.setAdapter(optionAdapter);
             optionView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -113,39 +117,53 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                 public void onClick(View v) {
                     selectedOptionsList = optionAdapter.getSelectedOptionList();
                     // 옵션 선택 정보와 메뉴 정보를 장바구니에 추가
-                    cartItem = createCartItem(menu, optionList, selectedOptionsList);
-                    Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
+                    if (selectedOptionsList.size() == optionList.size()) {
+                        cartItem = createCartItem(menu, optionList, selectedOptionsList);
+                        Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
 
-                    // 데이터베이스에 데이터 추가
-                    CartDBOpenHelper dbHelper = new CartDBOpenHelper(requireContext());
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        // 데이터베이스에 데이터 추가
+                        CartDBOpenHelper dbHelper = new CartDBOpenHelper(requireContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-                    ContentValues values = new ContentValues();
-                    values.put(CartDBOpenHelper.COLUMN_EMAIL, username);
-                    values.put(CartDBOpenHelper.COLUMN_NICKNAME, nickname);
-                    //values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
-                    values.put(CartDBOpenHelper.COLUMN_MENU_NAME, cartItem.getMenuName());
-                    values.put(CartDBOpenHelper.COLUMN_MENU_OPTION, TextUtils.join(", ", cartItem.getSelectedOptions())); // 옵션을 쉼표로 구분하여 저장
-                    values.put(CartDBOpenHelper.COLUMN_MENU_PRICE, cartItem.getMenuPrice());
-                    values.put(CartDBOpenHelper.COLUMN_QUANTITY, 1); // 수량 기본값 1로 설정
-                    values.put(CartDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate); // 현재 날짜 및 시간
+                        ContentValues values = new ContentValues();
+                        values.put(CartDBOpenHelper.COLUMN_EMAIL, username);
+                        values.put(CartDBOpenHelper.COLUMN_NICKNAME, nickname);
+                        //values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
+                        values.put(CartDBOpenHelper.COLUMN_MENU_NAME, cartItem.getMenuName());
+                        values.put(CartDBOpenHelper.COLUMN_MENU_OPTION, TextUtils.join(", ", cartItem.getSelectedOptions())); // 옵션을 쉼표로 구분하여 저장
+                        values.put(CartDBOpenHelper.COLUMN_MENU_PRICE, cartItem.getMenuPrice());
+                        values.put(CartDBOpenHelper.COLUMN_QUANTITY, 1); // 수량 기본값 1로 설정
+                        values.put(CartDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate); // 현재 날짜 및 시간
 
-                    long result = db.insert(CartDBOpenHelper.TABLE_NAME, null, values);
+                        long result = db.insert(CartDBOpenHelper.TABLE_NAME, null, values);
 
-                    if (result != -1) {
-                        // 카트에 항목이 성공적으로 추가된 경우
-                        // 사용자에게 메시지 표시 또는 다음 화면으로 이동 등의 작업 수행
-                        Toast.makeText(getActivity(), "장바구니에 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                        if (result != -1) {
+                            // 카트에 항목이 성공적으로 추가된 경우
+                            // 사용자에게 메시지 표시 또는 다음 화면으로 이동 등의 작업 수행
+                            Toast.makeText(getActivity(), "장바구니에 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // 카트에 항목 추가가 실패한 경우
+                            // 오류 처리를 수행
+                            Toast.makeText(getActivity(), "장바구니에 추가 실패", Toast.LENGTH_SHORT).show();
+                        }
+
+                        db.close();
+                        showCartConfirmationDialog();
                     } else {
-                        // 카트에 항목 추가가 실패한 경우
-                        // 오류 처리를 수행
-                        Toast.makeText(getActivity(), "장바구니에 추가 실패", Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                        builder.setMessage("옵션을 선택해주세요.");
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 확인 버튼 클릭 시, 원하는 동작 수행
+                            }
+                        });
+                        builder.show();
                     }
-
-                    db.close();
                     dismiss(); // 옵션창 닫기
                 }
             });
+
 
             // "주문하기" 버튼 클릭 이벤트 처리
             btnCartToOrder.setOnClickListener(new View.OnClickListener() {
@@ -180,22 +198,45 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             });
 
             // 하트 이미지 클릭 이벤트 처리
-            heart.setOnClickListener(new View.OnClickListener() {
+            heartButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // 현재 하트 이미지 상태에 따라 다른 이미지로 변경
                     if (isHeartSelected) {
                         // 이미 선택된 상태인 경우, 선택 해제 (ic_heart_default)
-                        heart.setImageResource(R.drawable.ic_heart_default);
+                        heartButton.setImageResource(R.drawable.ic_heart_default);
                         isHeartSelected = false;
                     } else {
                         // 선택되지 않은 상태인 경우, 선택 (ic_heart_fill)
-                        heart.setImageResource(R.drawable.ic_heart_fill);
+                        heartButton.setImageResource(R.drawable.ic_heart_fill);
                         isHeartSelected = true;
                     }
                 }
             });
 
+            minusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (quantityInt > 1) {
+                        quantityInt--;
+                        quantityTextView.setText(String.valueOf(quantityInt));
+                        updateOptionTotalPrice();
+                    }
+                    updateButtonsVisibility();
+                }
+            });
+
+            plusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    quantityInt++;
+                    if(quantityInt > 1) {
+                        updateButtonsVisibility();
+                        quantityTextView.setText(String.valueOf(quantityInt));
+                        updateOptionTotalPrice();
+                    }
+                }
+            });
         }
 
         return view;
@@ -205,7 +246,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         String menuName = menuItem.getName();
         String menuPrice = menuItem.getPrice();
 
-        List<String> optionNameList = new ArrayList<>();
+    List<String> optionNameList = new ArrayList<>();
         List<List<String>> optionContentsList = new ArrayList<>();
         int idx = 0;
         for(OptionDTO option : optionList) {
@@ -222,9 +263,41 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             }
             idx = 0;
         }
-        cartItem = new CartDTO(menuName, menuPrice, newSelectedOptionList);
-        Log.d(TAG, cartItem.getSelectedOptions().toString());
+
+        cartItem = new CartDTO(menuName, menuPrice, quantityInt, newSelectedOptionList);
+        //Log.d(TAG, cartItem.getSelectedOptions().toString());
         return cartItem;
+    }
+
+    private void showCartConfirmationDialog() {
+        // 장바구니에 추가되었다는 모달 다이얼로그 표시
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setMessage("장바구니에 추가되었습니다.");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 확인 버튼 클릭 시, 원하는 동작 수행
+                dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    // 총합 가격을 업데이트하는 메서드 추가
+    private void updateOptionTotalPrice() {
+        int menuPriceInt = Integer.parseInt(menu.getPrice().replace(",", "")); // 가격에서 특수 문자 제거
+        int optionTotalPriceInt = menuPriceInt * quantityInt; // 수량과 가격을 곱하여 총합 가격 계산
+        // 총합 가격을 숫자 포맷팅을 사용하여 표시
+        String formattedOptionTotalPrice = String.format("￦ %,d", optionTotalPriceInt);
+        optionTotalPrice.setText(formattedOptionTotalPrice);
+    }
+
+    private void updateButtonsVisibility() {
+        if (quantityInt > 1) {
+            minusButton.setImageResource(R.drawable.ic_minus); // quantity가 2 이상이면 minus 아이콘 변경
+        } else {
+            minusButton.setImageResource(R.drawable.ic_minus_default); // quantity가 1일 때는 기본 아이콘으로 변경
+        }
     }
 
     private List<OptionDTO> getOptionData() {
