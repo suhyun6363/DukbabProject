@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class MenuDTO implements Parcelable{
+    //private int menuID;
     private String name;
     private String price;
     private int imageResourceId;

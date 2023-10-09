@@ -1,5 +1,7 @@
 package kr.ac.duksung.dukbab.Home;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -30,7 +32,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView cartView;
     private CartAdapter cartAdapter;
     private CartDTO cartItem;
-    private TextView totalCount, totalPrice, removeAll;
+    private TextView totalCountTextView, totalPriceTextView, removeAll;
     private Button orderBtn;
     private List<CartDTO> cartList = new ArrayList<>();
 
@@ -50,8 +52,8 @@ public class HomeFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
         cartView = view.findViewById(R.id.cart);
-        totalCount = view.findViewById(R.id.totalCount);
-        totalPrice = view.findViewById(R.id.totalPrice);
+        totalCountTextView = view.findViewById(R.id.totalCount);
+        totalPriceTextView = view.findViewById(R.id.totalPrice);
         removeAll = view.findViewById(R.id.removeAll);
         orderBtn = view.findViewById(R.id.order_btn);
 
@@ -103,15 +105,10 @@ public class HomeFragment extends Fragment {
 
             cartAdapter.notifyDataSetChanged();
 
-            totalCount.setText("총 " + cartList.size() + "개");
-
-            //totalPrice.
-
             removeAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    cartList.clear();
-                    cartAdapter.notifyDataSetChanged();
+                    removeAllClicked(view);
                 }
             });
 
@@ -120,13 +117,48 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     // 주문 정보를 다음 화면(주문 창 액티비티)으로 전달
-                    Intent intent = new Intent(getContext(), OrderActivity.class);
-                    intent.putParcelableArrayListExtra("cartList", new ArrayList<>(cartList));
-                    startActivity(intent);
+                        Intent intent = new Intent(getContext(), OrderActivity.class);
+                        intent.putParcelableArrayListExtra("cartList", new ArrayList<>(cartList));
+                        startActivity(intent);
                 }
             });
         }
+
+        else {
+            orderBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // cartList가 비어있을 때 AlertDialog를 표시
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("장바구니가 비어 있습니다")
+                            .setMessage("장바구니에 메뉴를 추가해주세요.")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            });
+
+            cartAdapter = new CartAdapter(cartList);
+            cartView.setAdapter(cartAdapter);
+            cartView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
         return view;
+    }
+
+    public void addMenuToCart(CartDTO cartItem) {
+        cartList.add(cartItem);
+        cartAdapter.notifyDataSetChanged();
+    }
+
+    // 전체 삭제 TextView 클릭 시 호출되는 메서드
+    public void removeAllClicked(View view) {
+        // 카트에 담긴 모든 상품 삭제
+        cartList.clear();
+        // RecyclerView 업데이트
+        cartAdapter.notifyDataSetChanged();
     }
 }
 

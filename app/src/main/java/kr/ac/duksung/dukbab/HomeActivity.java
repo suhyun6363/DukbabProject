@@ -13,6 +13,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,8 @@ import android.widget.Toast;
 import android.content.Intent;
 
 
+import kr.ac.duksung.dukbab.Home.CartDTO;
+import kr.ac.duksung.dukbab.Home.MenuDTO;
 import kr.ac.duksung.dukbab.navigation.HeartFragment;
 import kr.ac.duksung.dukbab.Home.HomeFragment;
 import kr.ac.duksung.dukbab.navigation.MypageFragment;
@@ -32,6 +36,9 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolBar;
     private BottomNavigationView bottomNavigationView;
     private FrameLayout mainContent;
+    private ReviewFragment reviewFragment;
+    private HomeFragment homeFragment;
+    private HeartFragment heartFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +52,16 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         // Fragment 초기화
-        HomeFragment homeFragment = new HomeFragment();
-        ReviewFragment reviewFragment = new ReviewFragment();
-        HeartFragment heartFragment = new HeartFragment();
+        homeFragment = new HomeFragment();
+        reviewFragment = new ReviewFragment();
+        heartFragment = new HeartFragment();
         MypageFragment mypageFragment = new MypageFragment();
 
         // FragmentManager를 생성합니다.
         FragmentManager fragmentManager = getSupportFragmentManager();
+        // heartFragment를 추가합니다.
+        fragmentManager.beginTransaction().add(R.id.main_content, reviewFragment, "ReviewFragment").commit();
+        fragmentManager.beginTransaction().add(R.id.main_content, heartFragment, "HeartFragment").commit();
         fragmentManager.beginTransaction().replace(R.id.main_content, homeFragment).commit();
 
         bottomNavigationView.setSelectedItemId(R.id.navigation_home);
@@ -99,6 +109,29 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    // HomeFragment의 cart에서 메뉴를 추가
+    public void addToCart(CartDTO cartItem) {
+        if(homeFragment != null) {
+            homeFragment.addMenuToCart(cartItem);
+        }
+    }
+
+    // HeartFragment에서 메뉴를 제거
+    public void removeHeartMenuItem(MenuDTO menu) {
+        // HeartFragment로 데이터 전달
+        if (heartFragment != null) {
+            heartFragment.removeMenuFromHeart(menu);
+        }
+    }
+
+    // HeartFragment에 메뉴 추가
+    public void addToHeart(MenuDTO menu) {
+        // HeartFragment로 데이터 전달
+        if (heartFragment != null) {
+            heartFragment.addMenuToHeart(menu);
         }
     }
 

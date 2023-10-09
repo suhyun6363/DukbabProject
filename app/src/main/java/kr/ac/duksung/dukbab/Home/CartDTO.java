@@ -29,6 +29,10 @@ public class CartDTO implements Parcelable{
         return menuQuantity;
     }
 
+    public void setMenuQuantity(int menuQuantity) {
+        this.menuQuantity = menuQuantity;
+    }
+
     public String getMenuPrice() {
         return menuPrice;
     }

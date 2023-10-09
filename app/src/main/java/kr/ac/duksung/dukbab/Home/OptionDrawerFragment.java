@@ -26,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.duksung.dukbab.HomeActivity;
 import kr.ac.duksung.dukbab.R;
 
 public class OptionDrawerFragment extends BottomSheetDialogFragment {
@@ -101,14 +102,10 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
 
                         // HomeFragment에 수신
-                        Bundle args = new Bundle();
-                        args.putParcelable("cartItem", cartItem);
-                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                        HomeFragment homeFragment = new HomeFragment();
-                        homeFragment.setArguments(args);
-                        transaction.replace(R.id.main_content, homeFragment);
-                        transaction.commit();
-
+                        if (getActivity() instanceof HomeActivity) {
+                            HomeActivity activity = (HomeActivity) getActivity();
+                            activity.addToCart(cartItem); // HeartFragment에 데이터 추가 메서드 호출
+                        }
 
                         // 모달 다이얼로그 표시
                         showCartConfirmationDialog();
@@ -138,10 +135,21 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         // 이미 선택된 상태인 경우, 선택 해제 (ic_heart_default)
                         heartButton.setImageResource(R.drawable.ic_heart_default);
                         isHeartSelected = false;
+
+                        if (getActivity() instanceof HomeActivity) {
+                            HomeActivity activity = (HomeActivity) getActivity();
+                            activity.removeHeartMenuItem(menu); // 찜 해제 메서드 호출
+                        }
                     } else {
                         // 선택되지 않은 상태인 경우, 선택 (ic_heart_fill)
                         heartButton.setImageResource(R.drawable.ic_heart_fill);
                         isHeartSelected = true;
+
+                        // HeartFragment로 데이터 전달
+                        if (getActivity() instanceof HomeActivity) {
+                            HomeActivity activity = (HomeActivity) getActivity();
+                            activity.addToHeart(menu); // HeartFragment에 데이터 추가 메서드 호출
+                        }
                     }
                 }
             });
@@ -227,8 +235,10 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     private void updateButtonsVisibility() {
         if (quantityInt > 1) {
             minusButton.setImageResource(R.drawable.ic_minus); // quantity가 2 이상이면 minus 아이콘 변경
+            minusButton.setEnabled(true);
         } else {
             minusButton.setImageResource(R.drawable.ic_minus_default); // quantity가 1일 때는 기본 아이콘으로 변경
+            minusButton.setEnabled(false);
         }
     }
 

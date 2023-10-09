@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="총 1개"
+                android:text="총 0개"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textStyle="bold"

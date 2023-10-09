@@ -34,11 +34,7 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
     private CartDTO cartItem;
     //private MenuViewListener menuViewListener;
     public OptionDrawerFragment optionDrawerFragment;
-/*
-    public interface MenuViewListener {
-        void cartItemToHomeFragment(CartDTO cartItem);
-    }
-  */
+
     // MenuViewFragment를 생성하고 필요한 데이터를 전달하는 정적 메서드
     public static MenuViewFragment newInstance(String tabText) {
         MenuViewFragment fragment = new MenuViewFragment();
