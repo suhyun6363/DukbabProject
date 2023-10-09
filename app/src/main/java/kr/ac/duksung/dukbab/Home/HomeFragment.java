@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.ac.duksung.dukbab.R;
+import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 
 public class HomeFragment extends Fragment {
     private TabLayout tabLayout;
@@ -47,11 +49,30 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        // Initialize your database helper
+        CartDBOpenHelper dbHelper = new CartDBOpenHelper(requireContext());
+
+        // Retrieve cart items from the database
+        cartList = dbHelper.getCartItems();
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
-        cartView = view.findViewById(R.id.cart);
+
+        // RecyclerView 초기화
+        RecyclerView cartRecyclerView = view.findViewById(R.id.cart);
+
+        // RecyclerView에 어댑터 설정
+        cartAdapter = new CartAdapter(cartList);
+        cartRecyclerView.setAdapter(cartAdapter);
+        //cartView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // RecyclerView에 레이아웃 매니저 설정
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        cartRecyclerView.setLayoutManager(layoutManager);
+
         totalCountTextView = view.findViewById(R.id.totalCount);
         totalPriceTextView = view.findViewById(R.id.totalPrice);
         removeAll = view.findViewById(R.id.removeAll);
@@ -98,7 +119,6 @@ public class HomeFragment extends Fragment {
         if(args != null) {
             cartItem = args.getParcelable("cartItem");
             cartList.add(cartItem);
-
             cartAdapter = new CartAdapter(cartList);
             cartView.setAdapter(cartAdapter);
             cartView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -140,10 +160,6 @@ public class HomeFragment extends Fragment {
                             .show();
                 }
             });
-
-            cartAdapter = new CartAdapter(cartList);
-            cartView.setAdapter(cartAdapter);
-            cartView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         return view;
     }

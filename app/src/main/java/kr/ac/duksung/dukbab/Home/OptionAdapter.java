@@ -89,15 +89,14 @@ public class OptionAdapter extends RecyclerView.Adapter<ViewHolder> implements O
         return optionList.size();
     }
 
-/*
-    public List<String> getSelectedOptionList() {
-        List<String> selectedOptionList = new ArrayList<>();
-        for (OptionDTO option : getSelectedOptionContents) {
-            selectedOptionStrings.add(option.getName() + ": " + option.getSelectedOption());
+    /*
+        public List<String> getSelectedOptionList() {
+            List<String> selectedOptionList = new ArrayList<>();
+            for (OptionDTO option : getSelectedOptionContents) {
+                selectedOptionStrings.add(option.getName() + ": " + option.getSelectedOption());
+            }
         }
-    }
-*/
-
+    */
     public List<String> getSelectedOptionList() {
         return selectedOptionList;
     }

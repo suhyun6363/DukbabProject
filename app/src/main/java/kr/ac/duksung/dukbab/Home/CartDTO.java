@@ -1,6 +1,5 @@
 package kr.ac.duksung.dukbab.Home;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 

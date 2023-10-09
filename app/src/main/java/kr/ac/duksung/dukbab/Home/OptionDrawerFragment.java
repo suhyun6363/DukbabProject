@@ -2,10 +2,15 @@ package kr.ac.duksung.dukbab.Home;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +25,20 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import kr.ac.duksung.dukbab.HomeActivity;
 import kr.ac.duksung.dukbab.R;
+import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
+import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
 
 public class OptionDrawerFragment extends BottomSheetDialogFragment {
     public static final String TAG = "OptionDrawerFragment";
@@ -36,6 +47,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     private ImageView menuImg, minusButton, plusButton, heartButton;
     private TextView menuName, menuPrice, quantityTextView, optionTotalPrice;
     private RecyclerView optionView;
+    private Button btnCartToOrder;
     private List<String> selectedOptionsList = new ArrayList<>();
     private List<String> newSelectedOptionList = new ArrayList<>();
     private boolean isHeartSelected = false;
@@ -74,6 +86,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         quantityTextView = view.findViewById(R.id.quantity);
         plusButton = view.findViewById(R.id.plus);
         optionTotalPrice = view.findViewById(R.id.optionTotalPrice);
+        btnCartToOrder = view.findViewById(R.id.order_btn);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -89,6 +102,16 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
             optionView.setAdapter(optionAdapter);
             optionView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+            // Retrieve username and nickname from SharedPreferences
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            String username = sharedPreferences.getString("username", ""); // 사용자 이메일
+            String nickname = sharedPreferences.getString("nickname", ""); // 사용자 닉네임
+
+            // 현재 날짜와 시간을 가져오는 부분
+            Calendar calendar = Calendar.getInstance();
+            Date currentDate = calendar.getTime();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            String cartCreatedDate = dateFormat.format(currentDate);
 
             // "담기" 버튼 클릭 이벤트 처리
             // CartDTO 이용
@@ -101,18 +124,30 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         cartItem = createCartItem(menu, optionList, selectedOptionsList);
                         Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
 
-                        // HomeFragment에 수신
+/*                        // HomeFragment에 수신
                         if (getActivity() instanceof HomeActivity) {
                             HomeActivity activity = (HomeActivity) getActivity();
                             activity.addToCart(cartItem); // HeartFragment에 데이터 추가 메서드 호출
                         }
+*/                        // 데이터베이스에 데이터 추가
+                        CartDBOpenHelper dbHelper = new CartDBOpenHelper(requireContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-                        // 모달 다이얼로그 표시
+                        ContentValues values = new ContentValues();
+                        values.put(CartDBOpenHelper.COLUMN_EMAIL, username);
+                        values.put(CartDBOpenHelper.COLUMN_NICKNAME, nickname);
+                        //values.put(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
+                        values.put(CartDBOpenHelper.COLUMN_MENU_NAME, cartItem.getMenuName());
+                        values.put(CartDBOpenHelper.COLUMN_MENU_OPTION, TextUtils.join(", ", cartItem.getSelectedOptions())); // 옵션을 쉼표로 구분하여 저장
+                        values.put(CartDBOpenHelper.COLUMN_MENU_PRICE, cartItem.getMenuPrice());
+                        values.put(CartDBOpenHelper.COLUMN_MENU_QUANTITY, cartItem.getMenuQuantity()); // 수량 기본값 1로 설정
+                        values.put(CartDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate); // 현재 날짜 및 시간
+
+                        long result = db.insert(CartDBOpenHelper.TABLE_NAME, null, values);
+
+                        db.close();
                         showCartConfirmationDialog();
-
-                        dismiss(); // 옵션창 닫기
-                    }
-                    else {
+                    } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                         builder.setMessage("옵션을 선택해주세요.");
                         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -123,6 +158,40 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         });
                         builder.show();
                     }
+                    dismiss(); // 옵션창 닫기
+                }
+            });
+
+
+            // "주문하기" 버튼 클릭 이벤트 처리
+            btnCartToOrder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Cart 데이터를 가져올 DBHelper를 생성
+                    CartDBOpenHelper cartDBOpenHelper = new CartDBOpenHelper(requireContext());
+
+                    // Order 데이터를 저장할 DBHelper를 생성
+                    OrderDBOpenHelper orderDBOpenHelper = new OrderDBOpenHelper(requireContext());
+
+                    // 데이터베이스 연결을 가져옴
+                    SQLiteDatabase cartDB = cartDBOpenHelper.getReadableDatabase();
+                    SQLiteDatabase orderDB = orderDBOpenHelper.getWritableDatabase();
+
+                    // "cart.db"의 모든 데이터를 "order.db"로 복사
+                    String copyQuery = "INSERT INTO " + OrderDBOpenHelper.TABLE_NAME + " SELECT * FROM " + CartDBOpenHelper.TABLE_NAME;
+                    orderDB.execSQL(copyQuery);
+
+                    // "cart.db" 초기화
+                    cartDB.execSQL("DELETE FROM " + CartDBOpenHelper.TABLE_NAME);
+
+                    // 데이터베이스 연결 종료
+                    cartDB.close();
+                    orderDB.close();
+
+                    // 사용자에게 메시지 표시 또는 다음 화면으로 이동 등의 작업 수행
+                    Toast.makeText(getActivity(), "주문 화면으로 넘어갑니다", Toast.LENGTH_SHORT).show();
+
+                    dismiss(); // 옵션창 닫기
                 }
             });
 
@@ -186,7 +255,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         String menuName = menuItem.getName();
         String menuPrice = menuItem.getPrice();
 
-        List<String> optionNameList = new ArrayList<>();
+    List<String> optionNameList = new ArrayList<>();
         List<List<String>> optionContentsList = new ArrayList<>();
         int idx = 0;
         for(OptionDTO option : optionList) {
@@ -260,7 +329,6 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         riceAmountOptions.add("보통");
         riceAmountOptions.add("많이");
         OptionDTO option2 = new OptionDTO("밥 양", riceAmountOptions);
-
 /*
         List<String> meatOptions = new ArrayList<>();
         meatOptions.add("추가");
