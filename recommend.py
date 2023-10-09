@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from collections import defaultdict
 from heapq import nlargest
 
@@ -16,8 +16,6 @@ users = {
     'user8': [2, 5, 13, 28, 29],
     'user9': [2, 12, 15, 22, 24],
     'user10': [1, 8, 13, 18, 24]
-
-
 }
 
 # 선택한 숫자를 제외한 모든 숫자 목록 생성
@@ -38,15 +36,33 @@ for user, numbers in users.items():
     top_recommendations = nlargest(3, similarities, key=similarities.get)
     recommendations[user] = top_recommendations
 
-@app.route('/filtering')
-def index():
-    # user1에 대한 추천 숫자만 JSON으로 반환
-    user1_recommendations = recommendations.get('user1', [])
-    response = {
-        "username": "user1",
-        "numbers": user1_recommendations
-    }
-    return jsonify(response)
+
+@app.route('/filtering', methods=['POST'])
+def get_recommendations():
+    try:
+        # 클라이언트에서 POST로 전송한 숫자 데이터를 받아옵니다.
+        numbers = set(request.json)
+
+        # 입력받은 숫자를 제외한 모든 숫자 목록
+        remaining_numbers = all_numbers - numbers
+
+        # 추천 숫자를 계산합니다.
+        similarities = defaultdict(int)
+        for number in remaining_numbers:
+            for user_numbers in users.values():
+                if number in user_numbers:
+                    similarities[number] += 1
+        top_recommendations = nlargest(3, similarities, key=similarities.get)
+
+        # 추천 숫자를 JSON 형태로 응답합니다.
+        response = {
+            "numbers": top_recommendations
+        }
+        return jsonify(response)
+    except Exception as e:
+        print(str(e))
+        return jsonify({"error": "Internal Server Error"}), 500
+
 
 if __name__ == '__main__':
     app.run(host='192.168.219.101', port=5001, debug=True)
