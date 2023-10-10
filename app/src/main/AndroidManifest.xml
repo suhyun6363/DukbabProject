@@ -24,6 +24,10 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
+            android:name=".TodayMenuActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".SignupActivity"
             android:exported="false" />
         <activity
