@@ -10,9 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.ReviewDBOpenHelper;
+import androidx.annotation.NonNull;
+
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
     private Cursor cursor;
+    private Cursor mCursor;
 
     public ReviewAdapter(Cursor cursor) {
         this.cursor = cursor;
@@ -27,25 +30,45 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     }
 
     @Override
-    public void onBindViewHolder(ReviewViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
         if (cursor.moveToPosition(position)) {
             // 커서에서 데이터를 추출하고 ViewHolder 뷰에 바인딩합니다.
-            String storeId = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_ID)); /////
+
+            String storeName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_NAME)); /////
             String menuName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_MENU_NAME));
             float rating = cursor.getFloat(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_RATING));
             String reviewContent = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CONTENT));
-            //String username = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_EMAIL)); // 이메일 가져오기
-            String nickname = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_NICKNAME)); // 이메일 가져오기
-            String createdDate = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CREATED_DATE)); // 리뷰 작성 날짜 가져오기
+            String nickname = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_NICKNAME));
+            String createdDate = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CREATED_DATE));
+
+            // 별 이모티콘을 텍스트뷰에 표시
+            String starRating = getStarRatingString(rating);
+            holder.ratingTextView.setText(starRating);
 
 
             // 데이터를 ViewHolder 뷰에 바인딩합니다.
-            holder.restaurantNameTextView.setText(storeId);
+            holder.restaurantNameTextView.setText(storeName);
             holder.menuNameTextView.setText(menuName);
-            holder.ratingTextView.setText(String.valueOf(rating));
             holder.reviewContentTextView.setText(reviewContent);
-            holder.nicknameTextView.setText(nickname);
+            holder.nicknameTextView.setText("작성자: " + nickname);
             holder.createdDateTextView.setText(createdDate);
+        }
+    }
+
+    private String getStarRatingString(float rating) {
+        // 별 이모티콘을 rating 값에 따라 반환
+        if (rating >= 4.5) {
+            return "★★★★★";
+        } else if (rating >= 3.5) {
+            return "★★★★☆";
+        } else if (rating >= 2.5) {
+            return "★★★☆☆";
+        } else if (rating >= 1.5) {
+            return "★★☆☆☆";
+        } else if (rating >= 0.5) {
+            return "★☆☆☆☆";
+        } else {
+            return "☆☆☆☆☆";
         }
     }
 
@@ -73,4 +96,3 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         }
     }
 }
-

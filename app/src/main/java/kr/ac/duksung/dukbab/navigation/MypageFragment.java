@@ -42,6 +42,16 @@ public class MypageFragment extends Fragment {
             }
         });
 
+        Button editProfileBtn = view.findViewById(R.id.editProfileButton);
+        editProfileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 개인정보 수정 화면으로 이동
+                Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 

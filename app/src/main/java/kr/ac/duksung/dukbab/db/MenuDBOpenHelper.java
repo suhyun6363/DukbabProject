@@ -1,6 +1,7 @@
 package kr.ac.duksung.dukbab.db;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -40,5 +41,23 @@ public class MenuDBOpenHelper extends SQLiteOpenHelper {
         Log.w(MenuDBOpenHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + DB_TABLE_MENU);
         onCreate(db);
+    }
+
+    public String getStoreIdByMenuName(String menuName) {
+        String storeId = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_STORE_ID};
+        String selection = COLUMN_MENU_NAME + "=?";
+        String[] selectionArgs = {menuName};
+
+        Cursor cursor = db.query(DB_TABLE_MENU, columns, selection, selectionArgs, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            storeId = cursor.getString(cursor.getColumnIndex(COLUMN_STORE_ID));
+            cursor.close();
+        }
+
+        db.close();
+        return storeId;
     }
 }
