@@ -2,30 +2,24 @@ package kr.ac.duksung.dukbab;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-import android.content.Intent;
 
 
 import kr.ac.duksung.dukbab.navigation.HeartFragment;
 import kr.ac.duksung.dukbab.Home.HomeFragment;
 import kr.ac.duksung.dukbab.navigation.MypageFragment;
 import kr.ac.duksung.dukbab.navigation.ReviewFragment;
+import kr.ac.duksung.dukbab.api.TodayMenuFragment;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -88,9 +82,9 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bell:
-                // 벨 아이콘 클릭 시 동작 정의
-                // 예: Toast 메시지 표시
-                Toast.makeText(this, "벨 아이콘 클릭", Toast.LENGTH_SHORT).show();
+                // action_bell 메뉴 아이템이 클릭되었을 때 TodayMenuFragment로 이동하는 코드
+                TodayMenuFragment todayMenuFragment = new TodayMenuFragment();
+                replaceFragment(todayMenuFragment, "TodayMenuFragment");
                 return true;
             case R.id.action_ticket:
                 // 티켓 아이콘 클릭 시 동작 정의
@@ -101,6 +95,8 @@ public class HomeActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 
     // Fragment를 교체하는 메서드
     private void replaceFragment(Fragment fragment, String tag) {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_bell"
-        android:icon="@drawable/ic_alram_bell"
+        android:icon="@drawable/ic_duksung"
         android:title="종"
         app:showAsAction="always" />
     <item
