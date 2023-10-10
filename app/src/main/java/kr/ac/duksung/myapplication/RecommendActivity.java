@@ -43,16 +43,36 @@ public class RecommendActivity extends AppCompatActivity {
         recommendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 사용자가 입력한 다섯 개의 숫자를 가져옵니다.
-                int number1 = Integer.parseInt(editText1.getText().toString());
-                int number2 = Integer.parseInt(editText2.getText().toString());
-                int number3 = Integer.parseInt(editText3.getText().toString());
-                int number4 = Integer.parseInt(editText4.getText().toString());
-                int number5 = Integer.parseInt(editText5.getText().toString());
+                int number1 = 0;
+                int number2 = 0;
+                int number3 = 0;
+                int number4 = 0;
+                int number5 = 0;
 
+                // 사용자가 입력한 값이 비어있지 않다면 해당 값을 가져옵니다.
+                if (!editText1.getText().toString().isEmpty()) {
+                    number1 = Integer.parseInt(editText1.getText().toString());
+                }
+
+                if (!editText2.getText().toString().isEmpty()) {
+                    number2 = Integer.parseInt(editText2.getText().toString());
+                }
+
+                if (!editText3.getText().toString().isEmpty()) {
+                    number3 = Integer.parseInt(editText3.getText().toString());
+                }
+
+                if (!editText4.getText().toString().isEmpty()) {
+                    number4 = Integer.parseInt(editText4.getText().toString());
+                }
+
+                if (!editText5.getText().toString().isEmpty()) {
+                    number5 = Integer.parseInt(editText5.getText().toString());
+                }
 
                 // 숫자 다섯 개를 JSON 형식으로 변환합니다.
                 String jsonNumbers = "[" + number1 + ", " + number2 + ", " + number3 + ", " + number4 + ", " + number5 + "]";
+
 
                 // JSON 형식의 데이터를 RequestBody로 변환합니다.
                 RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), jsonNumbers);
