@@ -353,7 +353,7 @@ public class Database{
     public Cursor searchReview(String email) {  // 닉네임은 중복가능해서 email로 검색함
         String[] columns = {
                 ReviewDBOpenHelper.COLUMN_REVIEW_ID,
-                ReviewDBOpenHelper.COLUMN_STORE_ID,
+                ReviewDBOpenHelper.COLUMN_STORE_NAME,
                 ReviewDBOpenHelper.COLUMN_MENU_NAME,
                 ReviewDBOpenHelper.COLUMN_RATING,
                 ReviewDBOpenHelper.COLUMN_REVIEW_CONTENT,
@@ -378,6 +378,7 @@ public class Database{
         }
     }
 
+    // 주문 관련은 나중에 수정 예정
     // 주문 검색 (Order.db)
     public Cursor searchOrder(String email) {
         String[] columns = {
@@ -386,6 +387,10 @@ public class Database{
                 OrderDBOpenHelper.COLUMN_NICKNAME,
                 OrderDBOpenHelper.COLUMN_ORDER_DATE,
                 OrderDBOpenHelper.COLUMN_STORE_ID,
+                OrderDBOpenHelper.COLUMN_MENU_NAME,
+                OrderDBOpenHelper.COLUMN_MENU_OPTION,
+                OrderDBOpenHelper.COLUMN_MENU_PRICE,
+                OrderDBOpenHelper.COLUMN_MENU_QUANTITY,
                 OrderDBOpenHelper.COLUMN_STATUS,
                 OrderDBOpenHelper.COLUMN_TOTAL_PRICE,
                 OrderDBOpenHelper.COLUMN_PAYMENT_METHOD
@@ -453,35 +458,6 @@ public class Database{
             return -1;
         } finally {
             mDB.endTransaction(); // 트랜잭션 종료
-        }
-    }
-
-    // 주문 데이터를 저장하는 메서드
-    public long insertOrder(String orderId, String email, String nickname, String orderDate, String storeId, String status, String totalPrice, String paymentMethod) {
-        mOrderDB.beginTransaction(); // 트랜잭션 시작
-        try {
-            ContentValues values = new ContentValues();
-            values.put(OrderDBOpenHelper.COLUMN_ORDER_ID, orderId);
-            values.put(OrderDBOpenHelper.COLUMN_EMAIL, email);
-            values.put(OrderDBOpenHelper.COLUMN_NICKNAME, nickname);
-            values.put(OrderDBOpenHelper.COLUMN_ORDER_DATE, orderDate);
-            values.put(OrderDBOpenHelper.COLUMN_STORE_ID, storeId);
-            values.put(OrderDBOpenHelper.COLUMN_STATUS, status);
-            values.put(OrderDBOpenHelper.COLUMN_TOTAL_PRICE, totalPrice);
-            values.put(OrderDBOpenHelper.COLUMN_PAYMENT_METHOD, paymentMethod);
-
-            long result = mOrderDB.insert(OrderDBOpenHelper.TABLE_NAME, null, values);
-
-            if (result != -1) {
-                mOrderDB.setTransactionSuccessful(); // 트랜잭션 성공 표시
-            }
-
-            return result;
-        } catch (SQLException e) {
-            Log.e("Database", "Error inserting order data: " + e.getMessage());
-            return -1;
-        } finally {
-            mOrderDB.endTransaction(); // 트랜잭션 종료
         }
     }
 }
