@@ -1,6 +1,5 @@
 package kr.ac.duksung.dukbab.Home;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -27,6 +26,10 @@ public class CartDTO implements Parcelable{
 
     public int getMenuQuantity() {
         return menuQuantity;
+    }
+
+    public void setMenuQuantity(int menuQuantity) {
+        this.menuQuantity = menuQuantity;
     }
 
     public String getMenuPrice() {

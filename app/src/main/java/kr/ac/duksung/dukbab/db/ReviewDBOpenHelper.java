@@ -13,10 +13,10 @@ public class ReviewDBOpenHelper extends SQLiteOpenHelper {
 
     // Review 테이블의 컬럼 정의
     public static final String COLUMN_REVIEW_ID = "reviewId";
-    public static final String COLUMN_SELECTED_RESTAURANT = "selectedRestaurant";
+    public static final String COLUMN_STORE_ID = "storeId"; ////
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_NICKNAME = "nickname";
-    public static final String COLUMN_MENU_NAME = "menuName";
+    public static final String COLUMN_MENU_NAME = "menuName"; ////
     public static final String COLUMN_RATING = "rating";
     public static final String COLUMN_REVIEW_CONTENT = "content";
     public static final String COLUMN_REVIEW_CREATED_DATE = "reviewCreatedDate";
@@ -30,7 +30,7 @@ public class ReviewDBOpenHelper extends SQLiteOpenHelper {
         // Review.db 데이터베이스의 테이블 생성 쿼리
         String createTableQuery = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_REVIEW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_SELECTED_RESTAURANT + " TEXT, " +
+                COLUMN_STORE_ID + " INTEGER, " +
                 COLUMN_EMAIL + " TEXT, " +
                 COLUMN_NICKNAME + " TEXT, " +
                 COLUMN_MENU_NAME + " TEXT, " +

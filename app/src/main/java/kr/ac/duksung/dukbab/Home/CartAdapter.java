@@ -12,10 +12,14 @@ import java.util.List;
 
 import kr.ac.duksung.dukbab.R;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> implements OptionDrawerFragment.BtnaddToCartListener {
 
     private List<CartDTO> cartList;
-    private int quantityInt;
+    private int totalPrice = 0;
+
+    public void nodifyChange() {
+        notifyDataSetChanged();
+    }
 
     public CartAdapter(List<CartDTO> cartList) {
         this.cartList = cartList;
@@ -38,48 +42,48 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.menuName.setText(cartItem.getMenuName());
         holder.menuPrice.setText("￦ " + cartItem.getMenuPrice());
         holder.optionList.setText(cartItem.getSelectedOptions().toString());
-        quantityInt = cartItem.getMenuQuantity();
-        holder.quantityTextView.setText(Integer.toString(cartItem.getMenuQuantity()));
+        int quantityInt = cartItem.getMenuQuantity();
+        holder.quantityTextView.setText(Integer.toString(quantityInt));
 
         int menuPriceInt = Integer.parseInt(cartItem.getMenuPrice().replace(",", "")); // 가격에서 특수 문자 제거
         int optionTotalPriceInt = menuPriceInt * quantityInt; // 수량과 가격을 곱하여 총합 가격 계산
         // 총합 가격을 숫자 포맷팅을 사용하여 표시
         String formattedOptionTotalPrice = String.format("￦ %,d", optionTotalPriceInt);
-        holder.totalPrice.setText(formattedOptionTotalPrice);
+        holder.totalPriceTextView.setText(formattedOptionTotalPrice);
 
-        if(quantityInt > 1)
+        if(quantityInt > 1) {
             holder.minusButton.setImageResource(R.drawable.ic_minus);
-        else
+            holder.minusButton.setEnabled(true);
+        }
+        else {
             holder.minusButton.setImageResource(R.drawable.ic_minus_default);
+            holder.minusButton.setEnabled(false);
+        }
+
 
         holder.minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quantityInt--;
-                if(quantityInt == 1)
-                    holder.minusButton.setImageResource(R.drawable.ic_minus_default);
-                holder.quantityTextView.setText(String.valueOf(quantityInt));
-
-                int menuPriceInt = Integer.parseInt(cartItem.getMenuPrice().replace(",", "")); // 가격에서 특수 문자 제거
-                int optionTotalPriceInt = menuPriceInt * quantityInt; // 수량과 가격을 곱하여 총합 가격 계산
-                // 총합 가격을 숫자 포맷팅을 사용하여 표시
-                String formattedOptionTotalPrice = String.format("￦ %,d", optionTotalPriceInt);
-                holder.totalPrice.setText(formattedOptionTotalPrice);
+                int currentQuantity = cartItem.getMenuQuantity();
+                if (currentQuantity > 1) {
+                    currentQuantity--;
+                    cartItem.setMenuQuantity(currentQuantity);
+                    notifyDataSetChanged();
+                    String formattedTotalPrice = getTotalPrice();
+                    holder.totalPriceTextView.setText(formattedTotalPrice);
+                }
             }
         });
 
         holder.plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quantityInt++;
-                if(quantityInt > 1) {
-                    holder.quantityTextView.setText(String.valueOf(quantityInt));
-                    int menuPriceInt = Integer.parseInt(cartItem.getMenuPrice().replace(",", "")); // 가격에서 특수 문자 제거
-                    int optionTotalPriceInt = menuPriceInt * quantityInt; // 수량과 가격을 곱하여 총합 가격 계산
-                    // 총합 가격을 숫자 포맷팅을 사용하여 표시
-                    String formattedOptionTotalPrice = String.format("￦ %,d", optionTotalPriceInt);
-                    holder.totalPrice.setText(formattedOptionTotalPrice);
-                }
+                int currentQuantity = cartItem.getMenuQuantity();
+                currentQuantity++;
+                cartItem.setMenuQuantity(currentQuantity);
+                notifyDataSetChanged();
+                String formattedTotalPrice = getTotalPrice();
+                holder.totalPriceTextView.setText(formattedTotalPrice);
             }
         });
 
@@ -105,7 +109,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     // ViewHolder 클래스
     public static class CartViewHolder extends RecyclerView.ViewHolder {
-        public TextView menuName, menuPrice, optionList, quantityTextView, totalPrice;
+        public TextView menuName, menuPrice, optionList, quantityTextView, totalPriceTextView;
         public ImageView minusButton, plusButton, removeButton;
 
         public CartViewHolder(@NonNull View itemView) {
@@ -116,9 +120,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             minusButton = itemView.findViewById(R.id.minus);
             quantityTextView = itemView.findViewById(R.id.quantity);
             plusButton = itemView.findViewById(R.id.plus);
-            totalPrice = itemView.findViewById(R.id.totalPrice);
+            totalPriceTextView = itemView.findViewById(R.id.totalPrice);
             removeButton = itemView.findViewById(R.id.ic_remove);
         }
     }
-}
 
+    private String getTotalPrice() {
+        totalPrice = 0; // 총 가격 초기화
+
+        // 모든 아이템의 가격을 반복하여 총 가격 계산
+        for (CartDTO cartItem : cartList) {
+            int menuPriceInt = Integer.parseInt(cartItem.getMenuPrice().replace("￦", "").replace(",", ""));
+            totalPrice += menuPriceInt * cartItem.getMenuQuantity();
+        }
+
+        // 총 가격을 적절한 형식으로 포맷팅 (예: "￦ 10,000")
+        String formattedOptionTotalPrice = String.format("￦ %,d", totalPrice);
+
+        return formattedOptionTotalPrice;
+    }
+
+}

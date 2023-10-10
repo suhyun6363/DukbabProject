@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.ReviewDBOpenHelper;
 import androidx.annotation.NonNull;
-        
+
+
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
     private Cursor cursor;
 
@@ -29,24 +30,25 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
-        cursor.moveToPosition(position);
+        if (cursor.moveToPosition(position)) {
+            // 커서에서 데이터를 추출하고 ViewHolder 뷰에 바인딩합니다.
+            String storeId = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_ID));
+            String menuName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_MENU_NAME));
+            float rating = cursor.getFloat(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_RATING));
+            String reviewContent = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CONTENT));
+            String nickname = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_NICKNAME));
+            String createdDate = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CREATED_DATE));
 
-        String selectedRestaurant = cursor.getString(cursor.getColumnIndexOrThrow(ReviewDBOpenHelper.COLUMN_SELECTED_RESTAURANT));
-        String menuName = cursor.getString(cursor.getColumnIndexOrThrow(ReviewDBOpenHelper.COLUMN_MENU_NAME));
-        float rating = cursor.getFloat(cursor.getColumnIndexOrThrow(ReviewDBOpenHelper.COLUMN_RATING));
-        String reviewContent = cursor.getString(cursor.getColumnIndexOrThrow(ReviewDBOpenHelper.COLUMN_REVIEW_CONTENT));
-        String nickname = cursor.getString(cursor.getColumnIndexOrThrow(ReviewDBOpenHelper.COLUMN_NICKNAME));
-        String createdDate = cursor.getString(cursor.getColumnIndexOrThrow(ReviewDBOpenHelper.COLUMN_REVIEW_CREATED_DATE));
+            // 별 이모티콘을 텍스트뷰에 표시
+            String starRating = getStarRatingString(rating);
+            holder.ratingTextView.setText(starRating);
 
-        // 별 이모티콘을 텍스트뷰에 표시
-        String starRating = getStarRatingString(rating);
-        holder.ratingTextView.setText(starRating);
-
-        holder.restaurantNameTextView.setText(selectedRestaurant);
-        holder.menuNameTextView.setText(menuName);
-        holder.reviewContentTextView.setText(reviewContent);
-        holder.nicknameTextView.setText("작성자: " + nickname);
-        holder.createdDateTextView.setText(createdDate);
+            holder.restaurantNameTextView.setText(storeId);
+            holder.menuNameTextView.setText(menuName);
+            holder.reviewContentTextView.setText(reviewContent);
+            holder.nicknameTextView.setText("작성자: " + nickname);
+            holder.createdDateTextView.setText(createdDate);
+        }
     }
 
     private String getStarRatingString(float rating) {
@@ -65,7 +67,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
             return "☆☆☆☆☆";
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -91,4 +92,3 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         }
     }
 }
-

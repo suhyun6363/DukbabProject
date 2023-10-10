@@ -38,12 +38,14 @@
             android:id="@+id/menuName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="19dp"
             android:layout_marginTop="62dp"
+            android:layout_marginBottom="8dp"
             android:text="TextView"
             android:textColor="@color/black"
             android:textSize="22sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/menuPrice"
             app:layout_constraintStart_toEndOf="@+id/cardViewMember"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,23 +53,15 @@
             android:id="@+id/menuPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="144dp"
             android:text="TextView"
             android:textColor="@color/black"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/detailContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="숙주, 건두부"
-            android:textColor="@color/black"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/cardViewMember"
             app:layout_constraintTop_toBottomOf="@+id/menuName" />
 

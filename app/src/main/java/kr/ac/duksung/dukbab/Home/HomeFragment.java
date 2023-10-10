@@ -1,5 +1,7 @@
 package kr.ac.duksung.dukbab.Home;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -15,14 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import kr.ac.duksung.dukbab.R;
+import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
+import kr.ac.duksung.dukbab.db.Database;
 
 public class HomeFragment extends Fragment {
     private TabLayout tabLayout;
@@ -30,7 +33,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView cartView;
     private CartAdapter cartAdapter;
     private CartDTO cartItem;
-    private TextView totalCount, totalPrice, removeAll;
+    private TextView totalCountTextView, totalPriceTextView, removeAll;
     private Button orderBtn;
     private List<CartDTO> cartList = new ArrayList<>();
 
@@ -45,23 +48,41 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        // Initialize your database helper
+        CartDBOpenHelper dbHelper = new CartDBOpenHelper(requireContext());
+
+        // Retrieve cart items from the database
+        cartList = dbHelper.getCartItems();
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
-        cartView = view.findViewById(R.id.cart);
-        totalCount = view.findViewById(R.id.totalCount);
-        totalPrice = view.findViewById(R.id.totalPrice);
+
+        // RecyclerView 초기화
+        RecyclerView cartRecyclerView = view.findViewById(R.id.cart);
+
+        // RecyclerView에 어댑터 설정
+        cartAdapter = new CartAdapter(cartList);
+        cartRecyclerView.setAdapter(cartAdapter);
+
+        // RecyclerView에 레이아웃 매니저 설정
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        cartRecyclerView.setLayoutManager(layoutManager);
+
+        totalCountTextView = view.findViewById(R.id.totalCount);
+        totalPriceTextView = view.findViewById(R.id.totalPrice);
         removeAll = view.findViewById(R.id.removeAll);
         orderBtn = view.findViewById(R.id.order_btn);
 
-        // 탭 추가
+        // 추천 탭 추가
+        tabLayout.addTab(tabLayout.newTab().setText("추천"));
         tabLayout.addTab(tabLayout.newTab().setText("오늘의 메뉴"));
         tabLayout.addTab(tabLayout.newTab().setText("마라탕"));
         tabLayout.addTab(tabLayout.newTab().setText("분식"));
         tabLayout.addTab(tabLayout.newTab().setText("수제돈까스"));
-        tabLayout.addTab(tabLayout.newTab().setText("해장국"));
-        tabLayout.addTab(tabLayout.newTab().setText("일식"));
+        tabLayout.addTab(tabLayout.newTab().setText("파스타"));
 
         // ViewPager에 어댑터 연결
         MenuPageAdapter pageAdapter = new MenuPageAdapter(requireActivity(), tabLayout);
@@ -96,22 +117,16 @@ public class HomeFragment extends Fragment {
         if(args != null) {
             cartItem = args.getParcelable("cartItem");
             cartList.add(cartItem);
-
             cartAdapter = new CartAdapter(cartList);
             cartView.setAdapter(cartAdapter);
             cartView.setLayoutManager(new LinearLayoutManager(getContext()));
 
             cartAdapter.notifyDataSetChanged();
 
-            totalCount.setText("총 " + cartList.size() + "개");
-
-            //totalPrice.
-
             removeAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    cartList.clear();
-                    cartAdapter.notifyDataSetChanged();
+                    removeAllClicked(view);
                 }
             });
 
@@ -120,13 +135,63 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     // 주문 정보를 다음 화면(주문 창 액티비티)으로 전달
-                    Intent intent = new Intent(getContext(), OrderActivity.class);
-                    intent.putParcelableArrayListExtra("cartList", new ArrayList<>(cartList));
-                    startActivity(intent);
+                        Intent intent = new Intent(getContext(), OrderActivity.class);
+                        intent.putParcelableArrayListExtra("cartList", new ArrayList<>(cartList));
+                        startActivity(intent);
                 }
             });
         }
+
+        else {
+            orderBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // cartList가 비어있을 때 AlertDialog를 표시
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("장바구니가 비어 있습니다")
+                            .setMessage("장바구니에 메뉴를 추가해주세요.")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            });
+        }
+
+        // Store 데이터 삽입
+        Database database = Database.getInstance();
+        database.openStoreDB(requireContext()); // Store 데이터베이스 열기
+        database.getStoreData(); // Store 데이터 조회
+
+        //중복 데이터 삭제
+        database.deleteDuplicateStores();
+
+        // 가게 정보 추가
+        // 혼잡도 추가할 예정
+        database.addStore(1,"오늘의 메뉴", "Actual congestion info for 오늘의 메뉴");
+        database.addStore(2,"마라탕", "Actual congestion info for 마라탕");
+        database.addStore(3,"분식", "Actual congestion info for 분식");
+        database.addStore(4,"수제돈까스", "Actual congestion info for 수제돈까스");
+        database.addStore(5,"파스타", "Actual congestion info for 파스타");
+
+        // Store 데이터베이스 닫기
+        database.closeStoreDB();
+
         return view;
     }
-}
 
+    public void addMenuToCart(CartDTO cartItem) {
+        cartList.add(cartItem);
+        cartAdapter.notifyDataSetChanged();
+    }
+
+    // 전체 삭제 TextView 클릭 시 호출되는 메서드
+    public void removeAllClicked(View view) {
+        // 카트에 담긴 모든 상품 삭제
+        cartList.clear();
+        // RecyclerView 업데이트
+        cartAdapter.notifyDataSetChanged();
+    }
+}

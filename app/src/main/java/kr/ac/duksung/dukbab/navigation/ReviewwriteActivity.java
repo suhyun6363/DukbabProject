@@ -110,7 +110,7 @@ public class ReviewwriteActivity extends AppCompatActivity {
         String reviewCreatedDate = dateFormat.format(currentDate);
 
         ContentValues values = new ContentValues();
-        values.put(ReviewDBOpenHelper.COLUMN_SELECTED_RESTAURANT, selectedRestaurant);
+        values.put(ReviewDBOpenHelper.COLUMN_STORE_ID, selectedRestaurant);
         values.put(ReviewDBOpenHelper.COLUMN_EMAIL, username);
         values.put(ReviewDBOpenHelper.COLUMN_NICKNAME, nickname);
         values.put(ReviewDBOpenHelper.COLUMN_MENU_NAME, menuName);

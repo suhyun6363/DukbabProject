@@ -15,8 +15,9 @@ import kr.ac.duksung.dukbab.R;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
-    private List<MenuDTO> menuList;
     private MenuAdapterListener menuAdapterListener;
+    private List<MenuDTO> menuList = null;
+    private FragmentManager fragmentManager; // FragmentManager를 멤버 변수로 추가
 
     public interface MenuAdapterListener{
         void openOptionDrawerFragment(MenuDTO menu);
@@ -26,8 +27,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         this.menuAdapterListener = menuAdapterListener;
     }
 
-    public MenuAdapter(List<MenuDTO> menuList) {
+    public MenuAdapter(List<MenuDTO> menuList, FragmentManager fragmentManager) {
         this.menuList = menuList;
+        this.fragmentManager = fragmentManager; // FragmentManager를 초기화
     }
 
     @NonNull
@@ -48,8 +50,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 // 옵션 선택 슬라이딩 드로어 열기
-            if(menuAdapterListener != null)
-                menuAdapterListener.openOptionDrawerFragment(menu);
+                if(menuAdapterListener != null)
+                    menuAdapterListener.openOptionDrawerFragment(menu);
             }
         });
     }
