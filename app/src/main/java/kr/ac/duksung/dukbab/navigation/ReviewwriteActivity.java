@@ -96,7 +96,7 @@ public class ReviewwriteActivity extends AppCompatActivity {
 
     private void saveReviewToDatabase(String email) {
         // Spinner에서 선택된 음식점명을 가져오기
-        String selectedRestaurant = restaurantSpinner.getSelectedItem().toString();
+        String storeName = restaurantSpinner.getSelectedItem().toString();
         // EditText에서 메뉴명, 리뷰 내용 가져오기
         String menuName = menuNameEditText.getText().toString();
         String reviewContent = reviewContentEditText.getText().toString();
@@ -110,7 +110,7 @@ public class ReviewwriteActivity extends AppCompatActivity {
         String reviewCreatedDate = dateFormat.format(currentDate);
 
         ContentValues values = new ContentValues();
-        values.put(ReviewDBOpenHelper.COLUMN_STORE_ID, selectedRestaurant);
+        values.put(ReviewDBOpenHelper.COLUMN_STORE_NAME, storeName);
         values.put(ReviewDBOpenHelper.COLUMN_EMAIL, username);
         values.put(ReviewDBOpenHelper.COLUMN_NICKNAME, nickname);
         values.put(ReviewDBOpenHelper.COLUMN_MENU_NAME, menuName);

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
     private Cursor cursor;
+    private Cursor mCursor;
 
     public ReviewAdapter(Cursor cursor) {
         this.cursor = cursor;
@@ -32,7 +33,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
         if (cursor.moveToPosition(position)) {
             // 커서에서 데이터를 추출하고 ViewHolder 뷰에 바인딩합니다.
-            String storeId = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_ID));
+
+            String storeName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_NAME)); /////
             String menuName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_MENU_NAME));
             float rating = cursor.getFloat(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_RATING));
             String reviewContent = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CONTENT));
@@ -43,7 +45,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
             String starRating = getStarRatingString(rating);
             holder.ratingTextView.setText(starRating);
 
-            holder.restaurantNameTextView.setText(storeId);
+
+            // 데이터를 ViewHolder 뷰에 바인딩합니다.
+            holder.restaurantNameTextView.setText(storeName);
             holder.menuNameTextView.setText(menuName);
             holder.reviewContentTextView.setText(reviewContent);
             holder.nicknameTextView.setText("작성자: " + nickname);

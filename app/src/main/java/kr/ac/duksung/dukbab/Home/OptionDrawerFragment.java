@@ -36,6 +36,7 @@ import java.util.Locale;
 import kr.ac.duksung.dukbab.HomeActivity;
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
+import kr.ac.duksung.dukbab.db.MenuDBOpenHelper;
 import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
 
 public class OptionDrawerFragment extends BottomSheetDialogFragment {
@@ -141,10 +142,14 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         CartDBOpenHelper dbHelper = new CartDBOpenHelper(requireContext());
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+                        // OptionDrawerFragment 내에서 storeId 가져오기
+                        MenuDBOpenHelper dbHelper2 = new MenuDBOpenHelper(requireContext());
+                        String storeId = dbHelper2.getStoreIdByMenuName(menu.getName());
+
                         ContentValues values = new ContentValues();
                         values.put(CartDBOpenHelper.COLUMN_EMAIL, username);
                         values.put(CartDBOpenHelper.COLUMN_NICKNAME, nickname);
-                        //values.put(CartDBOpenHelper.COLUMN_STORE_ID, storeId); /////
+                        values.put(CartDBOpenHelper.COLUMN_STORE_ID, storeId); /////
                         values.put(CartDBOpenHelper.COLUMN_MENU_NAME, cartItem.getMenuName());
                         values.put(CartDBOpenHelper.COLUMN_MENU_OPTION, TextUtils.join(", ", cartItem.getSelectedOptions())); // 옵션을 쉼표로 구분하여 저장
                         values.put(CartDBOpenHelper.COLUMN_MENU_PRICE, cartItem.getMenuPrice());
@@ -152,12 +157,21 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         values.put(CartDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate); // 현재 날짜 및 시간
 
                         long result = db.insert(CartDBOpenHelper.TABLE_NAME, null, values);
-
                         db.close();
+
+                        // HomeFragment에 수신
+                        Bundle args = new Bundle();
+                        args.putParcelable("cartItem", cartItem);
+                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                        HomeFragment homeFragment = new HomeFragment();
+                        homeFragment.setArguments(args);
+                        transaction.replace(R.id.main_content, homeFragment);
+                        transaction.commit();
+
+                        // 모달 다이얼로그 표시
                         showCartConfirmationDialog();
 
-                        if(btnaddToCartListener != null)
-                            btnaddToCartListener.nodifyChange();
+                        dismiss(); // 옵션창 닫기
 
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -170,41 +184,41 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         });
                         builder.show();
                     }
-                    dismiss(); // 옵션창 닫기
+
                 }
             });
 
+            /*
+            // 다시 수정해야함!(CartDBOpenHelper column으로 복붙한 상태임)
             // "주문하기" 버튼 클릭 이벤트 처리
             btnCartToOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Cart 데이터를 가져올 DBHelper를 생성
-                    CartDBOpenHelper cartDBOpenHelper = new CartDBOpenHelper(requireContext());
+                    // 주문하기 동작을 수행
+                    selectedOptionsList = optionAdapter.getSelectedOptionList();
+                    // 옵션 선택 정보와 메뉴 정보를 장바구니에 추가
+                    if (selectedOptionsList.size() == optionList.size()) {
+                        cartItem = createCartItem(menu, optionList, selectedOptionsList);
+                        Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
 
-                    // Order 데이터를 저장할 DBHelper를 생성
-                    OrderDBOpenHelper orderDBOpenHelper = new OrderDBOpenHelper(requireContext());
+                        // 데이터베이스에 데이터 추가
+                        OrderDBOpenHelper dbHelper = new OrderDBOpenHelper(requireContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-                    // 데이터베이스 연결을 가져옴
-                    SQLiteDatabase cartDB = cartDBOpenHelper.getReadableDatabase();
-                    SQLiteDatabase orderDB = orderDBOpenHelper.getWritableDatabase();
+                        ContentValues values = new ContentValues();
+                        values.put(OrderDBOpenHelper.COLUMN_EMAIL, username);
+                        values.put(OrderDBOpenHelper.COLUMN_NICKNAME, nickname);
+                        //values.put(OrderDBOpenHelper.COLUMN_STORE_IT, storeId);
+                        values.put(OrderDBOpenHelper.COLUMN_MENU_NAME, cartItem.getMenuName());
+                        values.put(OrderDBOpenHelper.COLUMN_MENU_OPTION, TextUtils.join(", ", cartItem.getSelectedOptions())); // 옵션을 쉼표로 구분하여 저장
+                        values.put(OrderDBOpenHelper.COLUMN_MENU_PRICE, cartItem.getMenuPrice());
+                        values.put(OrderDBOpenHelper.COLUMN_MENU_QUANTITY, cartItem.getMenuQuantity()); // 수량 기본값 1로 설정
+                        values.put(OrderDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate); // 현재 날짜 및 시간
 
-                    // "cart.db"의 모든 데이터를 "order.db"로 복사
-                    String copyQuery = "INSERT INTO " + OrderDBOpenHelper.TABLE_NAME + " SELECT * FROM " + CartDBOpenHelper.TABLE_NAME;
-                    orderDB.execSQL(copyQuery);
+                        long result = db.insert(OrderDBOpenHelper.TABLE_NAME, null, values);
+                        db.close();
+*/
 
-                    // "cart.db" 초기화
-                    cartDB.execSQL("DELETE FROM " + CartDBOpenHelper.TABLE_NAME);
-
-                    // 데이터베이스 연결 종료
-                    cartDB.close();
-                    orderDB.close();
-
-                    // 사용자에게 메시지 표시 또는 다음 화면으로 이동 등의 작업 수행
-                    Toast.makeText(getActivity(), "주문 화면으로 넘어갑니다", Toast.LENGTH_SHORT).show();
-
-                    dismiss(); // 옵션창 닫기
-                }
-            });
 
             // 하트 이미지 클릭 이벤트 처리
             heartButton.setOnClickListener(new View.OnClickListener() {
@@ -269,6 +283,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     List<String> optionNameList = new ArrayList<>();
         List<List<String>> optionContentsList = new ArrayList<>();
         int idx = 0;
+
         for(OptionDTO option : optionList) {
             optionNameList.add(option.getName());
             optionContentsList.add(option.getOptionContents());

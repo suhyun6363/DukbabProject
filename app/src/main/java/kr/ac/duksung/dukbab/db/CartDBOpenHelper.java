@@ -14,7 +14,7 @@ import kr.ac.duksung.dukbab.Home.CartDTO;
 
 public class CartDBOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "Cart.db";
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
     public static final String TABLE_NAME = "Cart";
 
     // Cart 테이블의 컬럼 정의
@@ -92,4 +92,10 @@ public class CartDBOpenHelper extends SQLiteOpenHelper {
         return cartList;
     }
 
+    // 데이터베이스 초기화 메소드 추가
+    public void clearCartDatabase() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME);
+        db.close();
+    }
 }
