@@ -62,6 +62,10 @@ def fetch_diet_schedule(start_date, end_date):
         return None
     pass
 
+# 172.20.8.37
 if __name__ == '__main__':
     app.run(host='172.20.8.37', port=5000, debug=True)
+
+    # 집 192.168.219.101
+    # 학교 172.20.8.37
     
