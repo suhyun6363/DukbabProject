@@ -79,7 +79,7 @@ public class RecommendActivity extends AppCompatActivity {
 
                 // Retrofit 객체 생성
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("http://192.168.219.101:5001/") // API 엔드포인트의 기본 URL을 설정합니다.
+                        .baseUrl("http://172.20.8.37:5001/") // API 엔드포인트의 기본 URL을 설정합니다.
                         .addConverterFactory(GsonConverterFactory.create()) // JSON 데이터를 자바 객체로 변환하기 위해 Gson 컨버터를 사용합니다.
                         .build();
 
