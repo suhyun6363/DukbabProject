@@ -16,7 +16,6 @@ public class MenuDBOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MENU_NAME = "menuName";
     public static final String COLUMN_MENU_PRICE = "price";
     public static final String COLUMN_MENU_IMG = "img";
-    public static final String COLUMN_MENU_HEART = "heart";
     public static final String COLUMN_STORE_ID = "storeId";
 
     public MenuDBOpenHelper(@Nullable Context context) {
@@ -30,7 +29,6 @@ public class MenuDBOpenHelper extends SQLiteOpenHelper {
                 COLUMN_MENU_NAME + " TEXT, " +
                 COLUMN_MENU_PRICE + " TEXT, " +
                 COLUMN_MENU_IMG + " TEXT, " +
-                COLUMN_MENU_HEART + " TEXT, " +
                 COLUMN_STORE_ID + " INTEGER, " +
                 "FOREIGN KEY (" + COLUMN_STORE_ID + ") REFERENCES " + StoreDBOpenHelper.DB_TABLE_STORE + "(" + StoreDBOpenHelper.COLUMN_STORE_ID + "))";
         db.execSQL(createTableQuery);

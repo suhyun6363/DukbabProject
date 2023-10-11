@@ -167,13 +167,12 @@ public class Database{
     }
 
     // 메뉴 데이터베이스
-    public void addMenu(String menuName, String price, String img, int heart, int storeId) {
+    public void addMenu(String menuName, String price, String img, int storeId) {
         if (!isMenuExists(menuName, storeId)) { //중복 방지
             ContentValues values = new ContentValues();
             values.put(MenuDBOpenHelper.COLUMN_MENU_NAME, menuName);
             values.put(MenuDBOpenHelper.COLUMN_MENU_PRICE, price);
             values.put(MenuDBOpenHelper.COLUMN_MENU_IMG, img);
-            values.put(MenuDBOpenHelper.COLUMN_MENU_HEART, heart);
             values.put(MenuDBOpenHelper.COLUMN_STORE_ID, storeId);
             try {
                 openMenuDB(context);

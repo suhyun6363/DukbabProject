@@ -341,30 +341,34 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         List<OptionDTO> optionList = new ArrayList<>();
 
         // Option1 객체 생성 (예: 맵기 옵션)
-        List<String> mapLevelOptions = new ArrayList<>();
-        mapLevelOptions.add("1단계");
-        mapLevelOptions.add("2단계");
-        mapLevelOptions.add("3단계");
-        mapLevelOptions.add("4단계");
-        mapLevelOptions.add("5단계");
-        OptionDTO option1 = new OptionDTO("맵기", mapLevelOptions);
+        if (menu.getName().equals("마라탕") || menu.getName().equals("마라샹궈")) {
+            List<String> mapLevelOptions = new ArrayList<>();
+            mapLevelOptions.add("1단계");
+            mapLevelOptions.add("2단계");
+            mapLevelOptions.add("3단계");
+            mapLevelOptions.add("4단계");
+            mapLevelOptions.add("5단계");
+            OptionDTO option1 = new OptionDTO("맵기", mapLevelOptions);
+            optionList.add(option1);
+        }
 
         // Option2 객체 생성 (예: 밥 양 옵션)
-        List<String> riceAmountOptions = new ArrayList<>();
-        riceAmountOptions.add("적게");
-        riceAmountOptions.add("보통");
-        riceAmountOptions.add("많이");
-        OptionDTO option2 = new OptionDTO("밥 양", riceAmountOptions);
+        if (!menu.getName().equals("사이다(500ml)") && !menu.getName().equals("콜라(500ml)")) { //사이다 콜라 제외
+            List<String> riceAmountOptions = new ArrayList<>();
+            riceAmountOptions.add("적게");
+            riceAmountOptions.add("보통");
+            riceAmountOptions.add("많이");
+            OptionDTO option2 = new OptionDTO("밥 양", riceAmountOptions);
+            optionList.add(option2);
+        }
 /*
         List<String> meatOptions = new ArrayList<>();
         meatOptions.add("추가");
         meatOptions.add("없음");
         OptionDTO option3 = new OptionDTO("고기 추가(+500원)", meatOptions);
 */
-        optionList.add(option1);
-        optionList.add(option2);
         //optionList.add(option3);
-
         return optionList;
     }
 }
+
