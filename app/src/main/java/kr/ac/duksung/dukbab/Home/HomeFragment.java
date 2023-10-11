@@ -271,4 +271,9 @@ public class HomeFragment extends Fragment {
         // RecyclerView 업데이트
         cartAdapter.notifyDataSetChanged();
     }
+
+    public void DefaultPayment(View v) {
+        Intent intent = new Intent(getContext(), OrderActivity.class);
+        startActivity(intent);
+    }
 }
