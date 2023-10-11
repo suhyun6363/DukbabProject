@@ -97,9 +97,8 @@ public class HomeActivity extends AppCompatActivity {
                 replaceFragment(todayMenuFragment, "TodayMenuFragment");
                 return true;
             case R.id.action_ticket:
-                // 티켓 아이콘 클릭 시 동작 정의
-                // 예: 다른 액티비티로 이동
-                Toast.makeText(this, "티켓 아이콘 클릭", Toast.LENGTH_SHORT).show();
+                TicketFragment ticketFragment = new TicketFragment();
+                replaceFragment(ticketFragment, "TicketFragment");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
