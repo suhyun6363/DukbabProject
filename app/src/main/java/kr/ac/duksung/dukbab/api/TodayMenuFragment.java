@@ -31,7 +31,7 @@ public class TodayMenuFragment extends Fragment {
         tableLayout = view.findViewById(R.id.tableLayout);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.219.101:5000/") // Flask API의 기본 URL을 입력하세요
+                .baseUrl("http://172.20.8.37:5000/") // Flask API의 기본 URL을 입력하세요
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

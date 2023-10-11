@@ -2,6 +2,7 @@ package kr.ac.duksung.dukbab.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -40,7 +41,6 @@ public class ReviewDBOpenHelper extends SQLiteOpenHelper {
         db.execSQL(createTableQuery);
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Review.db 데이터베이스의 업그레이드 로직
@@ -48,8 +48,35 @@ public class ReviewDBOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
+    // 사용자 이메일로 리뷰 검색
+    public Cursor searchReviewByEmail(String userEmail) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_EMAIL + " = ?";
+        return db.rawQuery(query, new String[]{userEmail});
+    }
+
+    public Cursor getAllReviews() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME;
+        return db.rawQuery(query, null);
+    }
+
+
+    // 리뷰 저장
+    public long saveReview(String storeName, String userEmail, String nickname, String menuName, float rating, String reviewContent, String reviewCreatedDate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_STORE_NAME, storeName);
+        values.put(COLUMN_EMAIL, userEmail);
+        values.put(COLUMN_NICKNAME, nickname);
+        values.put(COLUMN_MENU_NAME, menuName);
+        values.put(COLUMN_RATING, rating);
+        values.put(COLUMN_REVIEW_CONTENT, reviewContent);
+        values.put(COLUMN_REVIEW_CREATED_DATE, reviewCreatedDate);
+
+        // 데이터베이스에 리뷰 저장
+        return db.insert(TABLE_NAME, null, values);
+    }
 }
-
-
-
-
