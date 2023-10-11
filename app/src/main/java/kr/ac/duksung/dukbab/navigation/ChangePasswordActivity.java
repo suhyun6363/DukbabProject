@@ -63,18 +63,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
 
-
     private void changePassword() {
-        // 비밀번호 변경 로직을 여기에 추가
-
-        // 예제에서는 현재 비밀번호가 데이터베이스에서 가져온 값으로 표시되고,
-        // 새 비밀번호와 비밀번호 확인이 일치하면 비밀번호 변경 성공 메시지를 토스트로 표시
-        // 실제로는 데이터베이스 업데이트 로직을 여기에 추가해야 합니다.
-
         String newPassword = newPasswordEditText.getText().toString();
         String confirmPassword = confirmPasswordEditText.getText().toString();
 
         if (newPassword.equals(confirmPassword)) {
+            DBOpenHelper dbHelper = new DBOpenHelper(this);
+            dbHelper.updatePassword(userEmail, newPassword); // 비밀번호 업데이트
+
             // 비밀번호 변경 성공 메시지를 토스트로 표시
             Toast.makeText(this, "비밀번호가 성공적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
             finish(); // 화면 닫기
@@ -83,4 +79,5 @@ public class ChangePasswordActivity extends AppCompatActivity {
             Toast.makeText(this, "새 비밀번호와 비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
         }
     }
+
 }
