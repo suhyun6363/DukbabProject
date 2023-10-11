@@ -11,11 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import kr.ac.duksung.dukbab.R;
+import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> implements OptionDrawerFragment.BtnaddToCartListener {
 
     private List<CartDTO> cartList;
-    private int totalPrice = 0;
+    private HomeFragment homeFragment; // HomeFragment 참조
+
+    public CartAdapter(List<CartDTO> cartList, HomeFragment homeFragment) {
+        this.cartList = cartList;
+        this.homeFragment = homeFragment; // HomeFragment 참조를 설정
+    }
 
     public void nodifyChange() {
         notifyDataSetChanged();
@@ -66,11 +72,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             public void onClick(View v) {
                 int currentQuantity = cartItem.getMenuQuantity();
                 if (currentQuantity > 1) {
-                    currentQuantity--;
-                    cartItem.setMenuQuantity(currentQuantity);
+                    // 1. 데이터베이스의 menuquantity를 감소시킴
+                    int newQuantity = currentQuantity - 1;
+
+                    // CartDBOpenHelper 인스턴스를 생성
+                    CartDBOpenHelper dbOpenHelper = new CartDBOpenHelper(v.getContext()); // 여기서 'v.getContext()'를 사용하여 Context를 가져옵니다.
+
+                    // CartDBOpenHelper 인스턴스를 사용하여 업데이트
+                    dbOpenHelper.updateCartItemQuantity(cartItem, newQuantity);
+
+                    // 2. 변경된 menuquantity를 가져와서 화면에 업데이트
+                    cartItem.setMenuQuantity(newQuantity);
                     notifyDataSetChanged();
-                    String formattedTotalPrice = getTotalPrice();
-                    holder.totalPriceTextView.setText(formattedTotalPrice);
+                    if (homeFragment != null) {
+                        homeFragment.updateTotalPriceAndCount();
+                    }
                 }
             }
         });
@@ -79,11 +95,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             @Override
             public void onClick(View view) {
                 int currentQuantity = cartItem.getMenuQuantity();
-                currentQuantity++;
-                cartItem.setMenuQuantity(currentQuantity);
+                // 1. 데이터베이스의 menuquantity를 감소시킴
+                int newQuantity = currentQuantity + 1;
+
+                // CartDBOpenHelper 인스턴스를 생성
+                CartDBOpenHelper dbOpenHelper = new CartDBOpenHelper(view.getContext()); // 여기서 'v.getContext()'를 사용하여 Context를 가져옵니다.
+
+                // CartDBOpenHelper 인스턴스를 사용하여 업데이트
+                dbOpenHelper.updateCartItemQuantity(cartItem, newQuantity);
+
+                // 2. 변경된 menuquantity를 가져와서 화면에 업데이트
+                cartItem.setMenuQuantity(newQuantity);
                 notifyDataSetChanged();
-                String formattedTotalPrice = getTotalPrice();
-                holder.totalPriceTextView.setText(formattedTotalPrice);
+                if (homeFragment != null) {
+                    homeFragment.updateTotalPriceAndCount();
+                };
             }
         });
 
@@ -93,8 +119,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             @Override
             public void onClick(View v) {
                 // 해당 아이템을 삭제하는 로직을 구현하세요.
+                CartDTO cartItemToRemove = cartList.get(position);
+
+                // CartDBOpenHelper 인스턴스를 생성
+                CartDBOpenHelper dbOpenHelper = new CartDBOpenHelper(v.getContext()); // 여기서 'v.getContext()'를 사용하여 Context를 가져옵니다.
+
+                // deleteCartItem 메서드를 호출하여 데이터베이스에서 아이템 삭제
+                dbOpenHelper.deleteCartItem(cartItemToRemove);
+
                 cartList.remove(position);
                 notifyDataSetChanged();
+
+                homeFragment.updateTotalPriceAndCount();
             }
         });
     }
@@ -123,21 +159,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             totalPriceTextView = itemView.findViewById(R.id.totalPrice);
             removeButton = itemView.findViewById(R.id.ic_remove);
         }
-    }
-
-    private String getTotalPrice() {
-        totalPrice = 0; // 총 가격 초기화
-
-        // 모든 아이템의 가격을 반복하여 총 가격 계산
-        for (CartDTO cartItem : cartList) {
-            int menuPriceInt = Integer.parseInt(cartItem.getMenuPrice().replace("￦", "").replace(",", ""));
-            totalPrice += menuPriceInt * cartItem.getMenuQuantity();
-        }
-
-        // 총 가격을 적절한 형식으로 포맷팅 (예: "￦ 10,000")
-        String formattedOptionTotalPrice = String.format("￦ %,d", totalPrice);
-
-        return formattedOptionTotalPrice;
     }
 
 }
