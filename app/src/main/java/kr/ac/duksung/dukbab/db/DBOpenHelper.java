@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.database.Cursor;
+
 
 public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "User.db";
@@ -35,5 +37,35 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
+    public String getPasswordByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String password = null;
+
+        String[] projection = {COLUMN_PASSWORD};
+        String selection = COLUMN_EMAIL + "=?";
+        String[] selectionArgs = {email};
+
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
+            cursor.close();
+        }
+
+        db.close();
+        return password;
+    }
+
+
+
 
 }
