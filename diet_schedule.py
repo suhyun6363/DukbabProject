@@ -63,5 +63,5 @@ def fetch_diet_schedule(start_date, end_date):
     pass
 
 if __name__ == '__main__':
-    app.run(host='192.168.219.101', port=5000, debug=True)
+    app.run(host='172.20.8.37', port=5000, debug=True)
     
