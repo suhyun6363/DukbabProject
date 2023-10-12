@@ -37,7 +37,7 @@ public class RecommendRetrofit {
         // 학교 172.20.8.37
         // Retrofit 객체 생성
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://172.20.18.26:5001/") // 서버의 기본 URL을 설정
+                .baseUrl("http://172.20.26.157:5001/") // 서버의 기본 URL을 설정
 
 
                 .addConverterFactory(GsonConverterFactory.create()) // Gson 컨버터 사용
@@ -48,34 +48,6 @@ public class RecommendRetrofit {
 
         // POST 요청 보내기
         Call<RecommendItem> call = postApiService.sendMenuIds(requestBody);
-        call.enqueue(new Callback<RecommendItem>() {
-            @Override
-            public void onResponse(Call<RecommendItem> call, Response<RecommendItem> response) {
-                if (response.isSuccessful()) {
-                    RecommendItem item = response.body();
-                    List<Integer> recommendations = item.getNumbers();
-
-                    // 서버에서 받은 추천 숫자를 가공하여 StringBuilder에 추가
-                    StringBuilder result = new StringBuilder("추천 받은 숫자: ");
-                    for (int number : recommendations) {
-                        result.append(number).append(" ");
-                    }
-
-                    // 추천 받은 숫자를 로그에 출력
-                    Log.d("Recommendation", result.toString());
-                } else {
-                    // 서버 응답이 실패한 경우
-                    Log.d("Recommendation", "Failed to get data");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RecommendItem> call, Throwable t) {
-                // 네트워크 요청 자체가 실패한 경우
-                t.printStackTrace();
-                Log.d("Recommendation", "Failed to connect to the server: " + t.getMessage());
-            }
-        });
+        call.enqueue(new MyCallback());
     }
-
 }

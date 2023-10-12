@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 import kr.ac.duksung.dukbab.R;
+import kr.ac.duksung.dukbab.api.MyCallback;
 import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
@@ -49,6 +50,7 @@ public class HomeFragment extends Fragment {
     private Button orderBtn;
     private List<CartDTO> cartList = new ArrayList<>();
     private int totalPrice = 10000;
+    private MyCallback myCallback = new MyCallback();
 
     public static HomeFragment newInstance(CartDTO cartItem) {
         Bundle args = new Bundle();
@@ -176,7 +178,7 @@ public class HomeFragment extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("파스타"));
 
         // ViewPager에 어댑터 연결
-        MenuPageAdapter pageAdapter = new MenuPageAdapter(requireActivity(), tabLayout);
+        MenuPageAdapter pageAdapter = new MenuPageAdapter(requireActivity(), tabLayout, myCallback);
         viewPager.setAdapter(pageAdapter);
 
         // ViewPager2 페이지 변경 이벤트 감지

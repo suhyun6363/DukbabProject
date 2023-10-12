@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.GridSpaceItemDecoration;
@@ -24,6 +26,7 @@ import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.MenuDBOpenHelper;
 
 public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapterListener {
+    //    private Map<String, HomeFragment.StoreCongestion> storeCongestionMap = new HashMap<>();
     public static final String TAG = "MenuViewFragment";
 
     private ImageView imageView;
@@ -158,17 +161,34 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         return view;
     }
 
-//    private int getCongestionImg() {
-//        return R.drawable.img_redcircle;
-//    }
     private int getCongestionImg(int storeId) {
         if (storeId == 1) {
             return R.drawable.ic_heart_fill;
         } else {
             // 추천 제외한 가게 탭들은 혼잡도 뜸
-            return R.drawable.img_redcircle;
+            return R.drawable.img_greencircle;
         }
     }
+
+//    private int getCongestionImg(int storeId) {
+//        if (storeId == 1) {
+//            // For storeId 1, set a specific image resource
+//            return R.drawable.ic_heart_fill; // Use the appropriate image resource
+//        }
+//
+//        if (storeCongestionMap != null) {
+//            HomeFragment.StoreCongestion congestion = storeCongestionMap.get(String.valueOf(storeId));
+//            if (congestion != null) {
+//                int imageResourceId = congestion.getCongestionImageResourceId();
+//                return imageResourceId;
+//            }
+//        }
+//
+//        // 혼잡도 이미지를 기본 이미지로 설정하거나, 다른 로직에 따라 적절한 이미지 리소스 ID 반환
+//        return R.drawable.img_greencircle;
+//    }
+
+
 
     private List<MenuDTO> getMenuData(int storeId) {
         List<MenuDTO> menuList = new ArrayList<>();
@@ -184,7 +204,6 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
                     int menuNameIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_MENU_NAME);
                     int priceIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_MENU_PRICE);
                     int imgIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_MENU_IMG);
-
                     String menuName = cursor.getString(menuNameIndex);
                     String price = cursor.getString(priceIndex);
                     String img = cursor.getString(imgIndex);

@@ -9,7 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import kr.ac.duksung.dukbab.Home.MenuDTO;
 
 public class Database{
     private static Database instance;
@@ -173,7 +176,6 @@ public class Database{
             values.put(MenuDBOpenHelper.COLUMN_MENU_NAME, menuName);
             values.put(MenuDBOpenHelper.COLUMN_MENU_PRICE, price);
             values.put(MenuDBOpenHelper.COLUMN_MENU_IMG, img);
-            values.put(MenuDBOpenHelper.COLUMN_MENU_HEART, heart);
             values.put(MenuDBOpenHelper.COLUMN_STORE_ID, storeId);
             try {
                 openMenuDB(context);
@@ -255,6 +257,7 @@ public class Database{
     public Cursor searchMenuByStoreId(int storeId) {
         SQLiteDatabase db = mMenuDBOpenHelper.getReadableDatabase();
         String[] columns = {
+                MenuDBOpenHelper.COLUMN_STORE_ID,
                 MenuDBOpenHelper.COLUMN_MENU_ID,
                 MenuDBOpenHelper.COLUMN_MENU_NAME,
                 MenuDBOpenHelper.COLUMN_MENU_PRICE,
@@ -263,7 +266,41 @@ public class Database{
         String selection = MenuDBOpenHelper.COLUMN_STORE_ID + "=?";
         String[] selectionArgs = {String.valueOf(storeId)};
         return db.query(MenuDBOpenHelper.DB_TABLE_MENU, columns, selection, selectionArgs, null, null, null);
-    }/*
+    }
+
+    public Cursor searchAllMenu() {
+        SQLiteDatabase db = mMenuDBOpenHelper.getReadableDatabase();
+        String[] columns = {
+                MenuDBOpenHelper.COLUMN_STORE_ID,
+                MenuDBOpenHelper.COLUMN_MENU_ID,
+                MenuDBOpenHelper.COLUMN_MENU_NAME,
+                MenuDBOpenHelper.COLUMN_MENU_PRICE,
+                MenuDBOpenHelper.COLUMN_MENU_IMG,
+        };
+        /*
+        String selection = MenuDBOpenHelper.COLUMN_STORE_ID + "=?";
+        String[] selectionArgs = {String.valueOf(storeId)};
+
+         */
+        return db.query(MenuDBOpenHelper.DB_TABLE_MENU, columns, null, null, null, null, null);
+        //return db.query(MenuDBOpenHelper.DB_TABLE_MENU, columns, selection, selectionArgs, null, null, null);
+    }
+
+    public Cursor searchMenuByMenuId(int menuId) {
+        SQLiteDatabase db = mMenuDBOpenHelper.getReadableDatabase();
+        String[] columns = {
+                MenuDBOpenHelper.COLUMN_STORE_ID,
+                MenuDBOpenHelper.COLUMN_MENU_ID,
+                MenuDBOpenHelper.COLUMN_MENU_NAME,
+                MenuDBOpenHelper.COLUMN_MENU_PRICE,
+                MenuDBOpenHelper.COLUMN_MENU_IMG,
+        };
+        String selection = MenuDBOpenHelper.COLUMN_MENU_ID + "=?";
+        String[] selectionArgs = {String.valueOf(menuId)};
+        return db.query(MenuDBOpenHelper.DB_TABLE_MENU, columns, selection, selectionArgs, null, null, null);
+    }
+
+    /*
 
     // 메뉴 ID 가져오기 (메뉴 이름으로)
     public int getMenuIdFromDatabase(String menuName) {

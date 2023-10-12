@@ -1,5 +1,6 @@
 package kr.ac.duksung.dukbab.Home;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +45,13 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         MenuDTO menu = menuList.get(position);
 
         holder.menuName.setText(menu.getName());
+        Log.d("MenuAdapter", "menuName 호출"+menu.getName());
         holder.menuPrice.setText("￦ " + menu.getPrice());
+        Log.d("MenuAdapter", "menuName 호출"+menu.getPrice());
+        Log.d("MenuAdapter", "menuName 호출"+menu.getImageResourceId());
+
         holder.menuImage.setImageResource(menu.getImageResourceId());
+        Log.d("이미지 호출", "후");
         holder.menuItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
