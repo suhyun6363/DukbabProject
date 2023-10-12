@@ -157,9 +157,6 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         return view;
     }
 
-//    private int getCongestionImg() {
-//        return R.drawable.img_redcircle;
-//    }
     private int getCongestionImg(int storeId) {
         if (storeId == 1) {
             return R.drawable.ic_heart_fill;
