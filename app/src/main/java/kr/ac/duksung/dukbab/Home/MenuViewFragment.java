@@ -4,6 +4,7 @@ import android.util.Log;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,6 +15,9 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,14 +42,14 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
     private CartDTO cartItem;
     public OptionDrawerFragment optionDrawerFragment;
     private static final String ARG_STORE_ID = "storeId";
-    private int storeId;
     private int heartFlag = 0;
 
     // MenuViewFragment를 생성하고 필요한 데이터를 전달하는 정적 메서드
-    public static MenuViewFragment newInstance(int storeId) {
+    public static MenuViewFragment newInstance(int storeId, String jsonRecommendations) {
         MenuViewFragment fragment = new MenuViewFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_STORE_ID, storeId); // storeId를 Bundle에 추가
+        args.putString("jsonRecommendations", jsonRecommendations);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,8 +71,8 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         Bundle args = getArguments();
         if (args != null) {
             int storeId = args.getInt(ARG_STORE_ID);
+            String jsonRecommendations = args.getString("jsonRecommendations");
 
-            List<MenuDTO> menuList = getMenuData(storeId);
             imageView.setImageResource(getCongestionImg(storeId));
 
             switch (storeId) {
@@ -94,8 +98,24 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
                     tabText.setText("기타 가게");
                     break;
             }
+
+            if(storeId != 1) {
+                List<MenuDTO> menuList = getMenuData(storeId);
+                menuAdapter = new MenuAdapter(menuList, getParentFragmentManager()); //
+            }
+            else {
+                if(jsonRecommendations != null) {
+                    List<MenuDTO> recommendMenuList = getRecommendData(jsonRecommendations);
+                    menuAdapter = new MenuAdapter(recommendMenuList, getParentFragmentManager()); //
+                }
+                else {
+                    List<MenuDTO> menuList = new ArrayList<>();
+                    menuAdapter = new MenuAdapter(menuList, getParentFragmentManager()); //
+                }
+
+            }
+
             // RecyclerView에 메뉴 데이터 설정
-            menuAdapter = new MenuAdapter(menuList, getParentFragmentManager()); //
             menuAdapter.setMenuAdapterListener(this);
             recyclerView.setAdapter(menuAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
@@ -217,5 +237,39 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
             }
         }
         return menuList;
+    }
+
+    private List<MenuDTO> getRecommendData(String jsonRecommendations) {
+        List<MenuDTO> recommendMenuList = new ArrayList<>();
+        // jsonRecommendations를 파싱하여 추천된 메뉴 ID 목록을 얻어옴
+        List<Integer> recommendedMenuIds = new Gson().fromJson(jsonRecommendations, new TypeToken<List<Integer>>() {
+        }.getType());
+
+        // 데이터베이스에서 추천된 메뉴 ID에 해당하는 메뉴를 검색하고 recommendMenuList에 추가함
+        Database database = Database.getInstance();
+        database.openMenuDB(requireContext());
+
+        for (int recommendMenuId : recommendedMenuIds) {
+            Cursor cursor = database.searchMenuByMenuId(recommendMenuId);
+            if (cursor != null && cursor.moveToFirst()) {
+                int storeIdIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_STORE_ID);
+                int menuNameIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_MENU_NAME);
+                int priceIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_MENU_PRICE);
+                int imgIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_MENU_IMG);
+
+                int storeId = cursor.getInt(storeIdIndex);
+                String menuName = cursor.getString(menuNameIndex);
+                String price = cursor.getString(priceIndex);
+                String img = cursor.getString(imgIndex);
+
+                // 검색된 메뉴를 MenuDTO 객체로 생성하여 recommendMenuList에 추가
+                recommendMenuList.add(new MenuDTO(storeId, menuName, price, Integer.parseInt(img)));
+
+                cursor.close();
+            }
+        }
+
+        database.closeMenuDB();
+        return recommendMenuList;
     }
 }

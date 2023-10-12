@@ -34,9 +34,9 @@ public class MenuPageAdapter extends FragmentStateAdapter{
     public Fragment createFragment(int position) {
         int storeId = getStoreIdByPosition(position);
         Log.d("MenuPageAdapter", "storeId: "+storeId);
-        //String jsonRecommendations = myCallback.getJsonRecommendations();
+        String jsonRecommendations = myCallback.getJsonRecommendations();
 
-        return MenuViewFragment.newInstance(storeId);
+        return MenuViewFragment.newInstance(storeId, jsonRecommendations);
     }
 
     private int getStoreIdByPosition(int position) {
