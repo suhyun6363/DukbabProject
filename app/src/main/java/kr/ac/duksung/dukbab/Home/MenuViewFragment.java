@@ -66,6 +66,7 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
             int storeId = args.getInt(ARG_STORE_ID);
 
             List<MenuDTO> menuList = getMenuData(storeId);
+
             switch (storeId) {
                 case 0:
                     tabText.setText("추천");  //추천
