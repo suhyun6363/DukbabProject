@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "User.db";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 5;
     public static final String TABLE_NAME = "Users";
 
     public static final String COLUMN_EMAIL = "email";

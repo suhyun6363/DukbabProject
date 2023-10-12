@@ -18,6 +18,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private List<CartDTO> cartList;
     private HomeFragment homeFragment; // HomeFragment 참조
 
+    public interface OptionTotalPriceListener {
+        void onOptionTotalPriceUpdated(int optionTotalPrice);
+    }
+
+
     public CartAdapter(List<CartDTO> cartList, HomeFragment homeFragment) {
         this.cartList = cartList;
         this.homeFragment = homeFragment; // HomeFragment 참조를 설정
@@ -25,10 +30,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     public void nodifyChange() {
         notifyDataSetChanged();
-    }
-
-    public CartAdapter(List<CartDTO> cartList) {
-        this.cartList = cartList;
     }
 
     @NonNull
@@ -54,7 +55,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         int menuPriceInt = Integer.parseInt(cartItem.getMenuPrice().replace(",", "")); // 가격에서 특수 문자 제거
         int optionTotalPriceInt = menuPriceInt * quantityInt; // 수량과 가격을 곱하여 총합 가격 계산
         // 총합 가격을 숫자 포맷팅을 사용하여 표시
-        String formattedOptionTotalPrice = String.format("￦ %,d", optionTotalPriceInt);
+        String formattedOptionTotalPrice = String.format("%d", optionTotalPriceInt);
         holder.totalPriceTextView.setText(formattedOptionTotalPrice);
 
         if(quantityInt > 1) {
