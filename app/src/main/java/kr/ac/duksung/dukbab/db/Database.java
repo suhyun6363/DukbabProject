@@ -137,12 +137,11 @@ public class Database{
     }
 //---------------------------------------------------------------------
     // 가게 데이터베이스
-    public void addStore(int storeId, String storeName, String congestionInfo) {
+    public void addStore(int storeId, String storeName) {
         if (!isStoreExists(storeName)) {   //중복 방지
             ContentValues values = new ContentValues();
             values.put(StoreDBOpenHelper.COLUMN_STORE_ID, storeId);
             values.put(StoreDBOpenHelper.COLUMN_STORE_NAME, storeName);
-            values.put(StoreDBOpenHelper.COLUMN_CONGESTION_INFO, congestionInfo);
             try {
                 openStoreDB(context); // 데이터베이스 열기
                 mStoreDB.insert(StoreDBOpenHelper.DB_TABLE_STORE, null, values);

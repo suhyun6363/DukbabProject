@@ -23,7 +23,7 @@ public class StoreDBOpenHelper extends SQLiteOpenHelper {
         String createTableQuery = "CREATE TABLE " + DB_TABLE_STORE + "(" +
                 COLUMN_STORE_ID + " INTEGER PRIMARY KEY," +
                 COLUMN_STORE_NAME + " TEXT," +
-                COLUMN_CONGESTION_INFO + " TEXT)";
+                COLUMN_CONGESTION_INFO + " INTEGER)";
         db.execSQL(createTableQuery);
     }
 

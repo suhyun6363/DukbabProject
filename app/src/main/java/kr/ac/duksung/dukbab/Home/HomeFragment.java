@@ -231,16 +231,16 @@ public class HomeFragment extends Fragment {
                 public void onClick(View view) {
 
                     if (cartList.isEmpty()) {
-                    // cartList가 비어있을 때 AlertDialog를 표시
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle("장바구니가 비어 있습니다")
-                            .setMessage("장바구니에 메뉴를 추가해주세요.")
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .show();
+                        // cartList가 비어있을 때 AlertDialog를 표시
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("장바구니가 비어 있습니다")
+                                .setMessage("장바구니에 메뉴를 추가해주세요.")
+                                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
                     }
                     else {
                         Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
@@ -272,12 +272,12 @@ public class HomeFragment extends Fragment {
 
         // 가게 정보 추가
         // 혼잡도 추가할 예정
-        database.addStore(1,"추천", "null");
-        database.addStore(2,"오늘의 메뉴", "Actual congestion info for 오늘의 메뉴");
-        database.addStore(3,"마라탕", "Actual congestion info for 마라탕");
-        database.addStore(4,"분식", "Actual congestion info for 분식");
-        database.addStore(5,"수제돈까스", "Actual congestion info for 수제돈까스");
-        database.addStore(6,"파스타", "Actual congestion info for 파스타");
+        database.addStore(1,"추천");
+        database.addStore(2,"오늘의 메뉴");
+        database.addStore(3,"마라탕");
+        database.addStore(4,"분식");
+        database.addStore(5,"수제돈까스");
+        database.addStore(6,"파스타");
 
         // Store 데이터베이스 닫기
         database.closeStoreDB();
@@ -322,8 +322,8 @@ public class HomeFragment extends Fragment {
 
         // 합계를 포맷팅하여 TextView에 표시
         String formattedTotalPrice = String.format("%,d", totalMenuPrice); // 가격을 포맷팅
-        totalPriceTextView.setText(formattedTotalPrice);
+        totalPriceTextView.setText(formattedTotalPrice + "원");
 
-        totalCountTextView.setText(String.valueOf(totalQuantity)); // 수량은 문자열로 설정
+        totalCountTextView.setText(String.valueOf("총 " + totalQuantity + "개")); // 수량은 문자열로 설정
     }
 }
