@@ -52,15 +52,6 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     private boolean isHeartSelected = false;
     private CartDTO cartItem;
     private int quantityInt = 1;
-    private BtnaddToCartListener btnaddToCartListener;
-
-    public interface BtnaddToCartListener {
-        void nodifyChange();
-    }
-
-    public void setBtnaddToCartListener(BtnaddToCartListener btnaddToCartListener) {
-        this.btnaddToCartListener = btnaddToCartListener;
-    }
 
     public static OptionDrawerFragment newInstance(MenuDTO menu) {
         OptionDrawerFragment fragment = new OptionDrawerFragment();
@@ -188,36 +179,19 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                 }
             });
 
-            /*
-            // 다시 수정해야함!(CartDBOpenHelper column으로 복붙한 상태임)
             // "주문하기" 버튼 클릭 이벤트 처리
             btnCartToOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    // 주문하기 동작을 수행
-                    selectedOptionsList = optionAdapter.getSelectedOptionList();
-                    // 옵션 선택 정보와 메뉴 정보를 장바구니에 추가
-                    if (selectedOptionsList.size() == optionList.size()) {
-                        cartItem = createCartItem(menu, optionList, selectedOptionsList);
-                        Log.d(TAG, cartItem.getMenuName() + cartItem.getMenuPrice() + cartItem.getSelectedOptions().toString());
+                public void onClick(View view) {
+                    HomeFragment homeFragment = (HomeFragment) getParentFragmentManager().findFragmentByTag("HomeFragmentTag");
 
-                        // 데이터베이스에 데이터 추가
-                        OrderDBOpenHelper dbHelper = new OrderDBOpenHelper(requireContext());
-                        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                        ContentValues values = new ContentValues();
-                        values.put(OrderDBOpenHelper.COLUMN_EMAIL, username);
-                        values.put(OrderDBOpenHelper.COLUMN_NICKNAME, nickname);
-                        //values.put(OrderDBOpenHelper.COLUMN_STORE_IT, storeId);
-                        values.put(OrderDBOpenHelper.COLUMN_MENU_NAME, cartItem.getMenuName());
-                        values.put(OrderDBOpenHelper.COLUMN_MENU_OPTION, TextUtils.join(", ", cartItem.getSelectedOptions())); // 옵션을 쉼표로 구분하여 저장
-                        values.put(OrderDBOpenHelper.COLUMN_MENU_PRICE, cartItem.getMenuPrice());
-                        values.put(OrderDBOpenHelper.COLUMN_MENU_QUANTITY, cartItem.getMenuQuantity()); // 수량 기본값 1로 설정
-                        values.put(OrderDBOpenHelper.COLUMN_CART_CREATED_DATE, cartCreatedDate); // 현재 날짜 및 시간
-
-                        long result = db.insert(OrderDBOpenHelper.TABLE_NAME, null, values);
-                        db.close();
-*/
+                    if (homeFragment != null) {
+                        homeFragment.processOrder();
+                    } else {
+                        // HomeFragment을 찾지 못한 경우 에러 처리 또는 로깅을 수행
+                    }
+                }
+            });
 
 
             // 하트 이미지 클릭 이벤트 처리
@@ -341,30 +315,36 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
         List<OptionDTO> optionList = new ArrayList<>();
 
         // Option1 객체 생성 (예: 맵기 옵션)
-        List<String> mapLevelOptions = new ArrayList<>();
-        mapLevelOptions.add("1단계");
-        mapLevelOptions.add("2단계");
-        mapLevelOptions.add("3단계");
-        mapLevelOptions.add("4단계");
-        mapLevelOptions.add("5단계");
-        OptionDTO option1 = new OptionDTO("맵기", mapLevelOptions);
+        if (menu.getName().equals("마라탕") || menu.getName().equals("마라샹궈")) {
+            List<String> mapLevelOptions = new ArrayList<>();
+            mapLevelOptions.add("1단계");
+            mapLevelOptions.add("2단계");
+            mapLevelOptions.add("3단계");
+            mapLevelOptions.add("4단계");
+            mapLevelOptions.add("5단계");
+            OptionDTO option1 = new OptionDTO("맵기", mapLevelOptions);
+            optionList.add(option1);
+        }
 
         // Option2 객체 생성 (예: 밥 양 옵션)
-        List<String> riceAmountOptions = new ArrayList<>();
-        riceAmountOptions.add("적게");
-        riceAmountOptions.add("보통");
-        riceAmountOptions.add("많이");
-        OptionDTO option2 = new OptionDTO("밥 양", riceAmountOptions);
+        if (!menu.getName().equals("사이다(500ml)") && !menu.getName().equals("콜라(500ml)")) { //사이다 콜라 제외
+            List<String> riceAmountOptions = new ArrayList<>();
+            riceAmountOptions.add("적게");
+            riceAmountOptions.add("보통");
+            riceAmountOptions.add("많이");
+            OptionDTO option2 = new OptionDTO("밥 양", riceAmountOptions);
+            optionList.add(option2);
+        }
 /*
         List<String> meatOptions = new ArrayList<>();
         meatOptions.add("추가");
         meatOptions.add("없음");
         OptionDTO option3 = new OptionDTO("고기 추가(+500원)", meatOptions);
 */
-        optionList.add(option1);
-        optionList.add(option2);
         //optionList.add(option3);
-
         return optionList;
+    }
+
+    public interface BtnaddToCartListener {
     }
 }

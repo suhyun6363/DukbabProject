@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class OrderDBOpenHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "Orders.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 3;
     public static final String TABLE_NAME = "Orders"; //Order은 sql예약어라 충돌 위험
 
     // Order 테이블의 컬럼 정의
@@ -20,10 +20,7 @@ public class OrderDBOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MENU_OPTION = "menuOption"; // 메뉴 옵션
     public static final String COLUMN_MENU_PRICE = "menuPrice"; // 메뉴 가격
     public static final String COLUMN_MENU_QUANTITY = "menuQuantity";
-    public static final String COLUMN_STATUS = "status";
     public static final String COLUMN_TOTAL_PRICE = "totalPrice";
-    public static final String COLUMN_PAYMENT_METHOD = "paymentMethod";
-
 
     public OrderDBOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -42,9 +39,7 @@ public class OrderDBOpenHelper extends SQLiteOpenHelper {
                 COLUMN_MENU_OPTION + " TEXT, " +
                 COLUMN_MENU_PRICE + " TEXT, " +
                 COLUMN_MENU_QUANTITY + " INTEGER, " +
-                COLUMN_STATUS + " TEXT, " +
-                COLUMN_TOTAL_PRICE + " TEXT, " +
-                COLUMN_PAYMENT_METHOD + " TEXT)";
+                COLUMN_TOTAL_PRICE + " TEXT)";
         db.execSQL(createTableQuery);
     }
 

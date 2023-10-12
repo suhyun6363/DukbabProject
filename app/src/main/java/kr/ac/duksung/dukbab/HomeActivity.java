@@ -105,13 +105,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    // HomeFragment의 cart에서 메뉴를 추가
-    public void addToCart(CartDTO cartItem) {
-        if(homeFragment != null) {
-            homeFragment.addMenuToCart(cartItem);
-        }
-    }
-
     // HeartFragment에서 메뉴를 제거
     public void removeHeartMenuItem(MenuDTO menu) {
         // HeartFragment로 데이터 전달
