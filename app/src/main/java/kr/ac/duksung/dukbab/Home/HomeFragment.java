@@ -48,6 +48,7 @@ public class HomeFragment extends Fragment {
     private TextView totalCountTextView, totalPriceTextView, removeAll;
     private Button orderBtn;
     private List<CartDTO> cartList = new ArrayList<>();
+    private int totalPrice = 10000;
 
     public static HomeFragment newInstance(CartDTO cartItem) {
         Bundle args = new Bundle();
@@ -220,6 +221,7 @@ public class HomeFragment extends Fragment {
 
                 }
             });
+
             updateTotalPriceAndCount();
         }
 
@@ -227,6 +229,7 @@ public class HomeFragment extends Fragment {
             orderBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     if (cartList.isEmpty()) {
                     // cartList가 비어있을 때 AlertDialog를 표시
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -243,6 +246,11 @@ public class HomeFragment extends Fragment {
                         Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
 
                         processOrder();
+
+                        Intent intent = new Intent(getContext(), OrderActivity.class);
+                        intent.putParcelableArrayListExtra("cartList", (ArrayList<CartDTO>) cartList);
+                        intent.putExtra("totalPrice", totalPrice);
+                        startActivity(intent);
 
                         // 장바구니 RecyclerView 갱신
                         cartList.clear();
