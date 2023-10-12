@@ -49,5 +49,6 @@ public class RecommendRetrofit {
         // POST 요청 보내기
         Call<RecommendItem> call = postApiService.sendMenuIds(requestBody);
         call.enqueue(new MyCallback());
+
     }
 }

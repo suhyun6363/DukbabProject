@@ -30,6 +30,7 @@ import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.MenuDBOpenHelper;
 
 public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapterListener {
+
     //    private Map<String, HomeFragment.StoreCongestion> storeCongestionMap = new HashMap<>();
     public static final String TAG = "MenuViewFragment";
 

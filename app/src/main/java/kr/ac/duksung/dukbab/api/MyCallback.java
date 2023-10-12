@@ -6,12 +6,14 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import kr.ac.duksung.dukbab.Home.HomeFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MyCallback implements Callback<RecommendItem> {
     public String jsonRecommendations;
+
     @Override
     public void onResponse(Call<RecommendItem> call, Response<RecommendItem> response) {
         if (response.isSuccessful()) {
@@ -24,6 +26,12 @@ public class MyCallback implements Callback<RecommendItem> {
 
             // 추천 받은 숫자를 로그에 출력
             Log.d("Recommendation", "추천 받은 숫자(JSON 형식): " + jsonRecommendations);
+
+            HomeFragment homeFragment = new HomeFragment();
+            if (homeFragment != null) {
+                homeFragment.setJsonRecommendations(jsonRecommendations);
+            }
+
         } else {
             // 서버 응답이 실패한 경우
             Log.d("Recommendation", "Failed to get data");

@@ -13,9 +13,9 @@ import kr.ac.duksung.dukbab.api.MyCallback;
 public class MenuPageAdapter extends FragmentStateAdapter{
     private final int[] storeIds;
     private final TabLayout tabLayout;
-    private MyCallback myCallback;
+    private String jsonRecommendations;
 
-    public MenuPageAdapter(FragmentActivity activity, final TabLayout tabLayout, MyCallback callback) {
+    public MenuPageAdapter(FragmentActivity activity, final TabLayout tabLayout, String jsonRecommendations) {
         super(activity);
         this.tabLayout = tabLayout;
         this.storeIds = new int[]{
@@ -26,7 +26,7 @@ public class MenuPageAdapter extends FragmentStateAdapter{
                 5, // 수제돈까스
                 6 // 파스타'
         };
-        this.myCallback = callback;
+        this.jsonRecommendations = jsonRecommendations;
     }
 
     @NonNull
@@ -34,7 +34,10 @@ public class MenuPageAdapter extends FragmentStateAdapter{
     public Fragment createFragment(int position) {
         int storeId = getStoreIdByPosition(position);
         Log.d("MenuPageAdapter", "storeId: "+storeId);
-        String jsonRecommendations = myCallback.getJsonRecommendations();
+        if(jsonRecommendations != null)
+            Log.d("MenuPageAdapter", "jsonRecommendations: "+jsonRecommendations);
+        else
+            Log.d("MenuPageAdapter", "null입");
 
         return MenuViewFragment.newInstance(storeId, jsonRecommendations);
     }
