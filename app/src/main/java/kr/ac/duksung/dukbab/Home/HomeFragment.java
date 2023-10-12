@@ -228,22 +228,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-<<<<<<< HEAD
-                    if (cartList.isEmpty()) {
-                        // cartList가 비어있을 때 AlertDialog를 표시
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setTitle("장바구니가 비어 있습니다")
-                                .setMessage("장바구니에 메뉴를 추가해주세요.")
-                                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .show();
-                    }
-                    else {
-                        Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
-=======
                 if (cartList.isEmpty()) {
                     // cartList가 비어있을 때 AlertDialog를 표시
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -257,8 +241,6 @@ public class HomeFragment extends Fragment {
                             .show();
                 } else {
                     Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
->>>>>>> a85d9c7607ed325eca6ffbd98ce3d7eea917b360
-
                     processOrder();
 
                     int totalMenuPrice = updateTotalPriceAndCount();
@@ -340,18 +322,11 @@ public class HomeFragment extends Fragment {
         totalCountTextView.setText(formattedTotalCount); // 수량은 문자열로 설정
 
         // 합계를 포맷팅하여 TextView에 표시
-<<<<<<< HEAD
-        String formattedTotalPrice = String.format("%,d", totalMenuPrice); // 가격을 포맷팅
-        totalPriceTextView.setText(formattedTotalPrice + "원");
-
-        totalCountTextView.setText(String.valueOf("총 " + totalQuantity + "개")); // 수량은 문자열로 설정
-=======
 
         String formattedTotalPrice = String.format("%,d원", totalMenuPrice); // 가격을 포맷팅
         totalPriceTextView.setText(formattedTotalPrice);
 
         return totalMenuPrice;
->>>>>>> a85d9c7607ed325eca6ffbd98ce3d7eea917b360
     }
 
 }
