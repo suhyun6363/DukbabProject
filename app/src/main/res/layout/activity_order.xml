@@ -4,19 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Home.OrderActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="329dp"
-        android:layout_marginBottom="383dp"
-        android:text="주문페이지"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="392dp"
+        android:layout_height="587dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.widget.Button
+        android:id="@+id/write_review_button"
+        android:layout_width="117dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_burgundy"
+        android:textColor="#FFFFFF"
+        android:text="리뷰 작성하기"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

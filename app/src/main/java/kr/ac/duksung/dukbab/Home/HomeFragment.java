@@ -42,6 +42,7 @@ public class HomeFragment extends Fragment {
     private TextView totalCountTextView, totalPriceTextView, removeAll;
     private Button orderBtn;
     private List<CartDTO> cartList = new ArrayList<>();
+    private int totalPrice = 10000;
 
     public static HomeFragment newInstance(CartDTO cartItem) {
         Bundle args = new Bundle();
@@ -210,6 +211,10 @@ public class HomeFragment extends Fragment {
 
                     // 사용자에게 메시지 표시 또는 다음 화면으로 이동 등의 작업 수행
                     Toast.makeText(getActivity(), "주문 화면으로 넘어갑니다", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getContext(), OrderActivity.class);
+                    intent.putParcelableArrayListExtra("cartList", (ArrayList<CartDTO>) cartList);
+                    intent.putExtra("totalPrice", totalPrice);
+                    startActivity(intent);
 
                     // 장바구니 RecyclerView 갱신
                     cartList.clear();
@@ -223,16 +228,10 @@ public class HomeFragment extends Fragment {
             orderBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // cartList가 비어있을 때 AlertDialog를 표시
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle("장바구니가 비어 있습니다")
-                            .setMessage("장바구니에 메뉴를 추가해주세요.")
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .show();
+                    Intent intent = new Intent(getContext(), OrderActivity.class);
+                    intent.putParcelableArrayListExtra("cartList", (ArrayList<CartDTO>) cartList);
+                    intent.putExtra("totalPrice", totalPrice);
+                    startActivity(intent);
                 }
             });
         }
@@ -270,10 +269,5 @@ public class HomeFragment extends Fragment {
         cartList.clear();
         // RecyclerView 업데이트
         cartAdapter.notifyDataSetChanged();
-    }
-
-    public void DefaultPayment(View v) {
-        Intent intent = new Intent(getContext(), OrderActivity.class);
-        startActivity(intent);
     }
 }

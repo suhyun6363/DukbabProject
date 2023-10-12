@@ -2,9 +2,12 @@ package kr.ac.duksung.dukbab.Home;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,36 +26,48 @@ import kr.ac.duksung.dukbab.R;
 
 public class OrderActivity extends AppCompatActivity {
 
+    private Intent intent;
+    private List<CartDTO> cartList;
+    private int totalPrice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order);
+        //context = this;
+        intent = getIntent();
+        // List<CartDTO> 객체를 추출
+        //cartList = intent.getParcelableArrayListExtra("cartList");
+        totalPrice = intent.getIntExtra("totalPrice", 0);
+
+        Log.d("OrderActivity", "totalPrice" + totalPrice);
+        onClick_request();
 
         // 초기설정 - 해당 프로젝트(안드로이드)의 application id 값을 설정합니다. 결제와 통계를 위해 꼭 필요합니다.
         BootpayAnalytics.init(this, "65258d8fd25985001fbb8438");
     }
 
-    public void onClick_request(View v) {
+    public void onClick_request() {
         // 결제호출
         BootUser user = new BootUser().setPhone("010-1234-5678");
         BootExtra extra = new BootExtra().setCardQuota("0,2,3");
 
         List items = new ArrayList<>();
-        BootItem item1 = new BootItem().setName("마우스").setId("ITEM_CODE_MOUSE").setQty(1).setPrice(500d);
-        BootItem item2 = new BootItem().setName("키보드").setId("ITEM_KEYBOARD_MOUSE").setQty(1).setPrice(500d);
+        BootItem item1 = new BootItem().setName("마우스").setId("ITEM_CODE_MOUSE").setQty(1).setPrice(5000d);
+        BootItem item2 = new BootItem().setName("키보드").setId("ITEM_KEYBOARD_MOUSE").setQty(1).setPrice(5000d);
+
         items.add(item1);
         items.add(item2);
 
         Payload payload = new Payload();
         payload.setApplicationId("65258d8fd25985001fbb8438")
-                .setOrderName("부트페이 결제테스트")
+                .setOrderName("덕밥 학식 주문")
                 .setPg("이니시스")
                 .setMethod("카드")
                 .setOrderId("1234")
-                .setPrice(1000d)
+                .setPrice(Double.valueOf(totalPrice))
                 .setUser(user)
-                .setExtra(extra)
-                .setItems(items);
+                .setExtra(extra);
+                //.setItems(items);
 
         Map map = new HashMap<>();
         map.put("1", "abcdef");
@@ -95,6 +110,8 @@ public class OrderActivity extends AppCompatActivity {
                     @Override
                     public void onDone(String data) {
                         Log.d("done", data);
+                        Intent intent = new Intent(getApplicationContext(), OrderConfirmActivity.class);
+                        startActivity(intent);
                     }
                 }).requestPayment();
     }
