@@ -388,12 +388,9 @@ public class Database{
                 OrderDBOpenHelper.COLUMN_ORDER_DATE,
                 OrderDBOpenHelper.COLUMN_STORE_ID,
                 OrderDBOpenHelper.COLUMN_MENU_NAME,
-                OrderDBOpenHelper.COLUMN_MENU_OPTION,
                 OrderDBOpenHelper.COLUMN_MENU_PRICE,
                 OrderDBOpenHelper.COLUMN_MENU_QUANTITY,
-                OrderDBOpenHelper.COLUMN_STATUS,
-                OrderDBOpenHelper.COLUMN_TOTAL_PRICE,
-                OrderDBOpenHelper.COLUMN_PAYMENT_METHOD
+                OrderDBOpenHelper.COLUMN_TOTAL_PRICE
         };
         try {
             // 이메일 필터가 null이면 모든 리뷰를 반환하도록 처리

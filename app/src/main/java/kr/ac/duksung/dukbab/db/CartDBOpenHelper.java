@@ -1,9 +1,11 @@
 package kr.ac.duksung.dukbab.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -74,7 +76,7 @@ public class CartDBOpenHelper extends SQLiteOpenHelper {
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 String menuName = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_NAME));
-                String menuPrice = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_PRICE));
+                String menuPrice = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_PRICE)).replace("￦", "").replace(",", "").trim();
                 int menuQuantity = cursor.getInt(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_QUANTITY)); ////
                 String menuOption = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_OPTION));
 
@@ -90,6 +92,73 @@ public class CartDBOpenHelper extends SQLiteOpenHelper {
         db.close();
 
         return cartList;
+    }
+
+    // 해당 메서드는 주어진 CartDTO 객체를 기반으로 cart.db에서 해당 아이템을 삭제합니다.
+    public void deleteCartItem(CartDTO cartItem) {
+        // 데이터베이스에 데이터가 1개 이상 있는지 확인
+        if (isDatabaseNotEmpty()) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String menuName = cartItem.getMenuName(); // 해당 아이템의 메뉴 이름
+            String menuOption = TextUtils.join(", ", cartItem.getSelectedOptions()); // 해당 아이템의 메뉴 옵션을 문자열로 변환
+
+            // 삭제할 아이템을 식별하는 조건문을 구성합니다.
+            String whereClause = COLUMN_MENU_NAME + " = ? AND " +
+                    COLUMN_MENU_OPTION + " = ?";
+
+            // 조건에 맞는 데이터를 삭제합니다.
+            db.delete(TABLE_NAME, whereClause, new String[]{menuName, menuOption});
+
+            db.close();
+        }
+    }
+
+    // totalQuantity 업데이트 메서드
+    public void updateTotalQuantity(int totalQuantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_MENU_QUANTITY, totalQuantity);
+
+        // 모든 데이터를 업데이트합니다.
+        db.update(TABLE_NAME, values, null, null);
+        db.close();
+    }
+
+    public void updateCartItemQuantity(CartDTO cartItem, int newQuantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_MENU_QUANTITY, newQuantity);
+        // 여기서 새로운 가격(newPrice)를 계산합니다. 메뉴 가격 * 수량
+        int newPrice = Integer.parseInt(cartItem.getMenuPrice().replace("￦", "").replace(",", "").trim()) * newQuantity;
+        values.put(COLUMN_MENU_PRICE, "￦ " + newPrice);
+
+        String whereClause = COLUMN_MENU_NAME + " = ? AND " + COLUMN_MENU_OPTION + " = ?";
+        String menuName = cartItem.getMenuName();
+        String menuOption = TextUtils.join(", ", cartItem.getSelectedOptions());
+
+        String[] whereArgs = {menuName, menuOption};
+
+        db.update(TABLE_NAME, values, whereClause, whereArgs);
+        db.close();
+
+        // 증가된 newQuantity 값으로 totalQuantity 계산
+        int totalQuantity = 0;
+        for (CartDTO item : getCartItems()) {
+            totalQuantity += item.getMenuQuantity();
+        }
+        updateTotalQuantity(totalQuantity);
+    }
+
+    public boolean isDatabaseNotEmpty() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        db.close();
+
+        return count > 0;
     }
 
     // 데이터베이스 초기화 메소드 추가

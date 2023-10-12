@@ -38,6 +38,8 @@ public class RecommendRetrofit {
         // Retrofit 객체 생성
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://172.20.18.26:5001/") // 서버의 기본 URL을 설정
+
+
                 .addConverterFactory(GsonConverterFactory.create()) // Gson 컨버터 사용
                 .build();
 

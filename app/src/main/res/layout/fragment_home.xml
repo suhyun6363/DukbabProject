@@ -89,8 +89,9 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/order_btn"
+                android:onClick="DefaultPayment"
                 android:layout_width="match_parent"
-                android:layout_height="28dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="0"
                 android:background="@drawable/orderbtn"
