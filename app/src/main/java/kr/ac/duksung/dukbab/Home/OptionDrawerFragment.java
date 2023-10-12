@@ -53,11 +53,14 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     private boolean isHeartSelected = false;
     private CartDTO cartItem;
     private int quantityInt = 1;
+    private HomeActivity homeActivity;
+    private int heartFlag;
 
-    public static OptionDrawerFragment newInstance(MenuDTO menu) {
+    public static OptionDrawerFragment newInstance(MenuDTO menu, int heartFlag) {
         OptionDrawerFragment fragment = new OptionDrawerFragment();
         Bundle args = new Bundle();
         args.putParcelable("menu", menu);
+        args.putInt("heartFlag", heartFlag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,6 +93,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
 
         Bundle args = getArguments();
         if (args != null) {
+            heartFlag = args.getInt("heartFlag");
             menu = args.getParcelable("menu");
             // menu 객체를 사용하여 필요한 초기화 작업 수행
             menuImg.setImageResource(menu.getImageResourceId());
@@ -159,6 +163,15 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         homeFragment.setArguments(args);
                         transaction.replace(R.id.main_content, homeFragment);
                         transaction.commit();
+
+                        if(heartFlag == 1) {
+                            // UI를 변경하려면 Activity의 메소드를 호출
+                            if (getActivity() instanceof HomeActivity) {
+                                HomeActivity homeActivity = (HomeActivity) getActivity();
+                                homeActivity.switchToHomeFragment(); // 메소드 호출로 UI 변경
+                                heartFlag = 0;
+                            }
+                        }
 
                         // 모달 다이얼로그 표시
                         showCartConfirmationDialog();

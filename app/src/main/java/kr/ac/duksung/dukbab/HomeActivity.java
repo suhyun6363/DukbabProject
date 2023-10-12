@@ -125,4 +125,10 @@ public class HomeActivity extends AppCompatActivity {
     private void replaceFragment(Fragment fragment, String tag) {
         getSupportFragmentManager().beginTransaction().replace(R.id.main_content, fragment, tag).commit();
     }
+
+    // 바텀네비게이션바 UI 변경 메소드
+    public void switchToHomeFragment() {
+        // BottomNavigationView를 Home 아이콘으로 변경
+        bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+    }
 }
