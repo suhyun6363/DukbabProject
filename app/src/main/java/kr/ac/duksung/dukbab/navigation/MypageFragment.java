@@ -43,14 +43,23 @@ public class MypageFragment extends Fragment {
         });
 
         Button editProfileBtn = view.findViewById(R.id.editProfileButton);
+        // MypageFragment.java
+
+    // editProfileBtn 클릭 시 호출되는 리스너 내부
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 개인정보 수정 화면으로 이동
+                // 사용자 이메일 정보 가져오기
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                String userEmail = sharedPreferences.getString("username", ""); // 사용자 이메일
+
+                // ChangePasswordActivity로 이동하면서 사용자 이메일 정보를 전달
                 Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
+                intent.putExtra("username", userEmail); // 사용자 이메일 정보를 인텐트에 추가
                 startActivity(intent);
             }
         });
+
 
         return view;
     }

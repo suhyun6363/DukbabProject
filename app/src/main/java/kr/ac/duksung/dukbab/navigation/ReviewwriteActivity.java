@@ -123,16 +123,20 @@ public class ReviewwriteActivity extends AppCompatActivity {
 
         // 저장 결과에 따른 처리
         if (result != -1) {
-            // 저장이 완료되었음을 사용자에게 알리는 Toast 메시지 띄우기
-            Toast.makeText(this, "작성이 완료되었습니다", Toast.LENGTH_SHORT).show();
+            // 저장이 성공적으로 완료되었다는 결과 코드를 설정합니다.
+            setResult(RESULT_OK);  // 여기서 Activity 클래스의 RESULT_OK 상수를 직접 사용합니다.
 
-            // 현재 Activity를 종료하여 ReviewFragment로 돌아감
+            // 현재 Activity를 종료하여 ReviewFragment로 돌아갑니다.
             finish();
         } else {
             // 저장에 실패한 경우 처리
             Toast.makeText(this, "저장에 실패했습니다", Toast.LENGTH_SHORT).show();
         }
     }
+    public interface OnReviewSavedListener {
+        void onReviewSaved();
+    }
+
 
     @Override
     protected void onDestroy() {

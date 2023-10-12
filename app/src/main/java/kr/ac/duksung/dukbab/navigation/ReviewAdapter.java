@@ -6,19 +6,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.ReviewDBOpenHelper;
-import androidx.annotation.NonNull;
-
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
+
+
+    public void changeCursor(Cursor newCursor) {
+        if (cursor != null) {
+            cursor.close();
+        }
+        cursor = newCursor;
+        notifyDataSetChanged();
+    }
+
     private Cursor cursor;
-    private Cursor mCursor;
+    private OnReviewSavedListener onReviewSavedListener;
+
+    public interface OnReviewSavedListener {
+        void onReviewSaved();
+    }
 
     public ReviewAdapter(Cursor cursor) {
         this.cursor = cursor;
+    }
+
+    public void setOnReviewSavedListener(OnReviewSavedListener listener) {
+        this.onReviewSavedListener = listener;
     }
 
     @Override
@@ -33,8 +49,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
         if (cursor.moveToPosition(position)) {
             // 커서에서 데이터를 추출하고 ViewHolder 뷰에 바인딩합니다.
-
-            String storeName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_NAME)); /////
+            String storeName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_STORE_NAME));
             String menuName = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_MENU_NAME));
             float rating = cursor.getFloat(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_RATING));
             String reviewContent = cursor.getString(cursor.getColumnIndex(ReviewDBOpenHelper.COLUMN_REVIEW_CONTENT));
@@ -44,7 +59,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
             // 별 이모티콘을 텍스트뷰에 표시
             String starRating = getStarRatingString(rating);
             holder.ratingTextView.setText(starRating);
-
 
             // 데이터를 ViewHolder 뷰에 바인딩합니다.
             holder.restaurantNameTextView.setText(storeName);
@@ -77,7 +91,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         return cursor.getCount();
     }
 
-    public static class ReviewViewHolder extends RecyclerView.ViewHolder {
+    public class ReviewViewHolder extends RecyclerView.ViewHolder {
         TextView restaurantNameTextView;
         TextView menuNameTextView;
         TextView ratingTextView;

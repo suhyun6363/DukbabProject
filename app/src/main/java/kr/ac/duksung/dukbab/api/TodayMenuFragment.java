@@ -19,6 +19,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import android.util.Log;
 
+// 집 192.168.219.101
+// 학교 172.20.8.37
 public class TodayMenuFragment extends Fragment {
 
     private TableLayout tableLayout;
@@ -30,8 +32,11 @@ public class TodayMenuFragment extends Fragment {
 
         tableLayout = view.findViewById(R.id.tableLayout);
 
+        // 집 192.168.219.101
+        // 학교 172.20.8.37
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.219.101:5000/") // Flask API의 기본 URL을 입력하세요
+                .baseUrl("http://172.20.8.37:5000/") // Flask API의 기본 URL을 입력하세요
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

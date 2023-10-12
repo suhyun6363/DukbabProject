@@ -7,9 +7,19 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/heartView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="366dp"
+        android:layout_height="338dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp" />
+
+    <android.widget.Button
+        android:id="@+id/recommendButton"
+        android:layout_width="136dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_burgundy"
+        android:text="추천받기"
+        android:textColor="#FFFFFF" />
+
+
 </LinearLayout>

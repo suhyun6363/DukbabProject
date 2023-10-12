@@ -1,5 +1,4 @@
 package kr.ac.duksung.dukbab.navigation;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,15 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.Database;
+import kr.ac.duksung.dukbab.navigation.ReviewAdapter;
 import kr.ac.duksung.dukbab.navigation.ReviewwriteActivity;
 
 public class ReviewFragment extends Fragment {
@@ -25,6 +23,7 @@ public class ReviewFragment extends Fragment {
     private RecyclerView recyclerView;
     private ReviewAdapter adapter;
     private SharedPreferences sharedPreferences;
+    private static final int REQUEST_CODE_WRITE_REVIEW = 1;
 
     public ReviewFragment() {
         // Required empty public constructor
@@ -37,7 +36,6 @@ public class ReviewFragment extends Fragment {
         // Review.db 데이터베이스 열기
         Database database = Database.getInstance();
         database.openReviewDB(getContext());
-
     }
 
     @Nullable
@@ -63,12 +61,33 @@ public class ReviewFragment extends Fragment {
         writeReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // "리뷰 작성" 버튼을 클릭할 때 ReviewWriteActivity를 모달 다이얼로그 형태로 띄웁니다.
                 Intent intent = new Intent(getActivity(), ReviewwriteActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_WRITE_REVIEW);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_WRITE_REVIEW && resultCode == getActivity().RESULT_OK) {
+            // 새 리뷰가 저장되었음을 알리는 코드를 여기에 추가합니다.
+
+            // ReviewwriteActivity에서 넘어온 데이터를 이용하여 화면을 갱신합니다.
+            Database database = Database.getInstance();
+            Cursor cursor = database.searchReview(null); // 'email'을 사용자의 이메일로 대체합니다.
+            adapter.changeCursor(cursor); // 어댑터의 changeCursor 메서드로 커서를 교체하여 리사이클러뷰를 업데이트합니다.
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // 데이터베이스 연결 종료
+        Database database = Database.getInstance();
+        database.closeReviewDB();
     }
 }
