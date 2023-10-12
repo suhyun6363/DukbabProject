@@ -103,54 +103,54 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
             database.deleteDuplicateMenus();
 
             //오늘의 메뉴에 메뉴 추가
-            database.addMenu("오늘의 메뉴A", "6,500", String.valueOf(R.drawable.img_maratang), 0, 2);
-            database.addMenu("오늘의 메뉴B", "6,500", String.valueOf(R.drawable.img_maratang), 0, 2);
+            database.addMenu("오늘의 메뉴A", "6,500", String.valueOf(R.drawable.placeholder_image), 0, 2);
+            database.addMenu("오늘의 메뉴B", "6,500", String.valueOf(R.drawable.placeholder_image), 0, 2);
 
             // 마라탕 가게에 메뉴 추가
-            database.addMenu("마라탕", "6,900", String.valueOf(R.drawable.img_maratang), 0, 3);
-            database.addMenu("마라샹궈", "8,700", String.valueOf(R.drawable.img_maratang), 0, 3);
-            database.addMenu("파인애플볶음밥", "7,000", String.valueOf(R.drawable.img_maratang), 0, 3);
-            database.addMenu("빙홍차", "2,500", String.valueOf(R.drawable.img_maratang), 0, 3);
-            database.addMenu("꿔바로우(소)", "5,000", String.valueOf(R.drawable.img_maratang), 0, 3);
-            database.addMenu("꿔바로우(대)", "7,000", String.valueOf(R.drawable.img_maratang), 0, 3);
+            database.addMenu("마라탕", "6,900", String.valueOf(R.drawable.placeholder_image), 0, 3);
+            database.addMenu("마라샹궈", "8,700", String.valueOf(R.drawable.placeholder_image), 0, 3);
+            database.addMenu("파인애플볶음밥", "7,000", String.valueOf(R.drawable.placeholder_image), 0, 3);
+            database.addMenu("빙홍차", "2,500", String.valueOf(R.drawable.placeholder_image), 0, 3);
+            database.addMenu("꿔바로우(소)", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 3);
+            database.addMenu("꿔바로우(대)", "7,000", String.valueOf(R.drawable.placeholder_image), 0, 3);
 
             // 분식 가게에 메뉴 추가
-            database.addMenu("마성떡볶이", "3,500", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("치킨꼬치떡볶이", "5,500", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("마성라면", "3,500", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("만두라면", "4,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("치즈라면", "4,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("부산어묵", "2,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("빨간어묵", "2,500", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("찰순대", "3,500", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("버터장조림덮밥", "5,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("치킨마요덮밥", "5,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("마성김밥", "3,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("참치김밥", "3,500", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("모듬튀김", "5,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("오징어튀김", "5,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("야채튀김", "3,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("삼각잡채말이만두", "5,000", String.valueOf(R.drawable.img_maratang), 0, 4);
-            database.addMenu("고추튀김", "3,000", String.valueOf(R.drawable.img_maratang), 0, 4);
+            database.addMenu("마성떡볶이", "3,500", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("치킨꼬치떡볶이", "5,500", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("마성라면", "3,500", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("만두라면", "4,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("치즈라면", "4,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("부산어묵", "2,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("빨간어묵", "2,500", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("찰순대", "3,500", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("버터장조림덮밥", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("치킨마요덮밥", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("마성김밥", "3,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("참치김밥", "3,500", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("모듬튀김", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("오징어튀김", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("야채튀김", "3,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("삼각잡채말이만두", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
+            database.addMenu("고추튀김", "3,000", String.valueOf(R.drawable.placeholder_image), 0, 4);
 
             // 수제돈까스 가게에 메뉴 추가
-            database.addMenu("카레덮밥", "5,000", String.valueOf(R.drawable.img_maratang), 0, 5);
-            database.addMenu("돈카츠", "6,900", String.valueOf(R.drawable.img_maratang), 0, 5);
-            database.addMenu("돈카츠카레덮밥", "7,500", String.valueOf(R.drawable.img_maratang), 0, 5);
-            database.addMenu("새우카레덮밥", "7,500", String.valueOf(R.drawable.img_maratang), 0, 5);
-            database.addMenu("더블돈카츠", "9,500", String.valueOf(R.drawable.img_maratang), 0, 5);
+            database.addMenu("카레덮밥", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 5);
+            database.addMenu("돈카츠", "6,900", String.valueOf(R.drawable.placeholder_image), 0, 5);
+            database.addMenu("돈카츠카레덮밥", "7,500", String.valueOf(R.drawable.placeholder_image), 0, 5);
+            database.addMenu("새우카레덮밥", "7,500", String.valueOf(R.drawable.placeholder_image), 0, 5);
+            database.addMenu("더블돈카츠", "9,500", String.valueOf(R.drawable.placeholder_image), 0, 5);
 
             // 파스타 가게에 메뉴 추가
-            database.addMenu("고기리들기름파스타", "5,000", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("우삼겹알리올리오", "6,900", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("클래식토마토파스타", "7,500", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("트러플버섯크림파스타", "7,500", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("4분돼지김치파스타", "9,500", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("대패삼겹크림파스타", "5,000", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("매콤로제파스타", "6,900", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("김치삼겹필라프", "7,500", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("콜라(500ml)", "7,500", String.valueOf(R.drawable.img_maratang), 0, 6);
-            database.addMenu("사이다(500ml)", "9,500", String.valueOf(R.drawable.img_maratang), 0, 6);
+            database.addMenu("고기리들기름파스타", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("우삼겹알리올리오", "6,900", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("클래식토마토파스타", "7,500", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("트러플버섯크림파스타", "7,500", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("4분돼지김치파스타", "9,500", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("대패삼겹크림파스타", "5,000", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("매콤로제파스타", "6,900", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("김치삼겹필라프", "7,500", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("콜라(500ml)", "7,500", String.valueOf(R.drawable.placeholder_image), 0, 6);
+            database.addMenu("사이다(500ml)", "9,500", String.valueOf(R.drawable.placeholder_image), 0, 6);
 
             database.closeMenuDB(); // Menu 데이터베이스 닫기
         }
