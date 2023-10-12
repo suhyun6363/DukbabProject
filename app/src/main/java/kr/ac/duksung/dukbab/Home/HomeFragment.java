@@ -264,11 +264,12 @@ public class HomeFragment extends Fragment {
 
         // 가게 정보 추가
         // 혼잡도 추가할 예정
-        database.addStore(1,"오늘의 메뉴", "Actual congestion info for 오늘의 메뉴");
-        database.addStore(2,"마라탕", "Actual congestion info for 마라탕");
-        database.addStore(3,"분식", "Actual congestion info for 분식");
-        database.addStore(4,"수제돈까스", "Actual congestion info for 수제돈까스");
-        database.addStore(5,"파스타", "Actual congestion info for 파스타");
+        database.addStore(1,"추천", "null");
+        database.addStore(2,"오늘의 메뉴", "Actual congestion info for 오늘의 메뉴");
+        database.addStore(3,"마라탕", "Actual congestion info for 마라탕");
+        database.addStore(4,"분식", "Actual congestion info for 분식");
+        database.addStore(5,"수제돈까스", "Actual congestion info for 수제돈까스");
+        database.addStore(6,"파스타", "Actual congestion info for 파스타");
 
         // Store 데이터베이스 닫기
         database.closeStoreDB();

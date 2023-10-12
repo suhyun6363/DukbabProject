@@ -15,12 +15,12 @@ public class MenuPageAdapter extends FragmentStateAdapter {
         super(activity);
         this.tabLayout = tabLayout;
         this.storeIds = new int[]{
-                0,
-                1, // 오늘의 메뉴
-                2, // 마라탕
-                3, // 분식
-                4, // 수제돈까스
-                5  // 파스타
+                1, // 추천
+                2, // 오늘의 메뉴
+                3, // 마라탕
+                4, // 분식
+                5, // 수제돈까스
+                6 // 파스타
         };
     }
 
@@ -35,7 +35,7 @@ public class MenuPageAdapter extends FragmentStateAdapter {
         if (position >= 0 && position < storeIds.length) {
             return storeIds[position];
         }
-        // 기본값으로 설정
+        // 기본값으로 1
         return 1;
     }
 
