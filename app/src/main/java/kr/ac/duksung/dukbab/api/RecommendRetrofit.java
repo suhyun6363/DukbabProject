@@ -4,6 +4,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.ac.duksung.dukbab.Home.HomeFragment;
 import kr.ac.duksung.dukbab.Home.MenuDTO;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -46,9 +48,11 @@ public class RecommendRetrofit {
         // Retrofit 인터페이스 구현체 생성
         PostApiService postApiService = retrofit.create(PostApiService.class);
 
+        MyCallback.RecommendationListener listener = new HomeFragment(); // 또는 이 인터페이스를 구현한 다른 객체
+        MyCallback callback = new MyCallback(listener);
         // POST 요청 보내기
         Call<RecommendItem> call = postApiService.sendMenuIds(requestBody);
-        call.enqueue(new MyCallback());
+        call.enqueue(callback);
 
     }
 }

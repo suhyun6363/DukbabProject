@@ -40,7 +40,7 @@ import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
 import kr.ac.duksung.dukbab.db.ReviewDBOpenHelper;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements MyCallback.RecommendationListener {
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private RecyclerView cartRecyclerView;
@@ -51,6 +51,14 @@ public class HomeFragment extends Fragment {
     private List<CartDTO> cartList = new ArrayList<>();
     private int totalPrice = 10000;
     private String jsonRecommendations;
+    private MyCallback myCallback = new MyCallback(this);
+
+    @Override
+    public void onRecommendationsReceived(String jsonRecommendations) {
+        // MyCallback에서 전달받은 데이터를 처리
+        // 여기에서 jsonRecommendations을 사용할 수 있음
+        this.jsonRecommendations = jsonRecommendations;
+    }
 
     public static HomeFragment newInstance(CartDTO cartItem) {
         Bundle args = new Bundle();
