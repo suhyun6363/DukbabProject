@@ -1,5 +1,6 @@
 package kr.ac.duksung.dukbab.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -7,7 +8,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 public class StoreDBOpenHelper extends SQLiteOpenHelper {
-    public static final String TABLE_NAME = "";
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "Store.db";
     public static final String DB_TABLE_STORE = "Store";
@@ -26,6 +26,15 @@ public class StoreDBOpenHelper extends SQLiteOpenHelper {
                 COLUMN_STORE_NAME + " TEXT," +
                 COLUMN_CONGESTION_INFO + " INTEGER)";
         db.execSQL(createTableQuery);
+    }
+
+    public void updateCongestionInfo(int storeId, int congestionInfo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CONGESTION_INFO, congestionInfo);
+        String selection = COLUMN_STORE_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(storeId) };
+        db.update(DB_TABLE_STORE, values, selection, selectionArgs);
     }
 
     @Override

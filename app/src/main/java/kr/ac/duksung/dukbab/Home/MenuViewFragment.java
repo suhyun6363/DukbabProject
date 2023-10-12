@@ -1,5 +1,7 @@
 package kr.ac.duksung.dukbab.Home;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,15 +17,22 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.GridSpaceItemDecoration;
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.MenuDBOpenHelper;
+import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
+import kr.ac.duksung.dukbab.db.StoreDBOpenHelper;
 
 public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapterListener {
 //    private Map<String, HomeFragment.StoreCongestion> storeCongestionMap = new HashMap<>();
@@ -69,7 +78,7 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
             int storeId = args.getInt(ARG_STORE_ID);
 
             List<MenuDTO> menuList = getMenuData(storeId);
-            imageView.setImageResource(getCongestionImg(storeId));
+//            imageView.setImageResource(getCongestionImg(storeId, "여유"));
 
             switch (storeId) {
                 case 1:
@@ -161,14 +170,79 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         return view;
     }
 
-    private int getCongestionImg(int storeId) {
-        if (storeId == 1) {
-            return R.drawable.ic_heart_fill;
-        } else {
-            // 추천 제외한 가게 탭들은 혼잡도 뜸
-            return R.drawable.img_greencircle;
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            int storeId = 5; // 원하는 상점의 ID를 지정
+            CongestionCalculator calculator = new CongestionCalculator();
+            calculator.calculateAndSetCongestionInfo(storeId);
         }
+        public class CongestionCalculator {
+            public void calculateAndSetCongestionInfo(int storeId) {
+                // 현재 날짜 및 시간을 가져오기
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date currentTime = new Date();
+                String currentDateTime = dateFormat.format(currentTime);
+
+                // 데이터베이스에서 주문 목록을 가져오기
+                Database database = Database.getInstance();
+                database.openOrderDB(requireContext());
+
+                // 5분 이내의 시간 범위 계산
+                Date currentDate = null;
+                try {
+                    currentDate = dateFormat.parse(currentDateTime);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(currentDate);
+                calendar.add(Calendar.MINUTE, -5); // 5분 이내로 설정
+                Date fiveMinutesAgo = calendar.getTime();
+
+                // 데이터베이스에서 주문 목록을 가져오기
+                Cursor cursor = database.searchOrdersByStoreAndTime(storeId, dateFormat.format(fiveMinutesAgo), currentDateTime);
+                int orderCountWithin5Minutes = 0;
+
+                if (cursor != null) {
+                    try {
+                        while (cursor.moveToNext()) {
+                            // 여기에서 각 주문을 가져와서 orderCountWithin5Minutes를 증가시킵니다.
+                            orderCountWithin5Minutes++;
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                }
+
+                Log.d("Debug", "Order Count Within 5 Minutes: " + orderCountWithin5Minutes); // 중간 값 로그
+
+                database.closeOrderDB();
+
+                // 혼잡도를 계산
+                int congestionInfo = 0; // 기본값 설정
+                if (orderCountWithin5Minutes >= 5) {
+                    congestionInfo = 2; // 혼잡이면 2로 설정
+                } else if (orderCountWithin5Minutes >= 3) {
+                    congestionInfo = 1; // 보통이면 1로 설정
+                }
+                Log.d("Debug", "Congestion Info: " + congestionInfo); // 혼잡도 값 로그
+
+                // 혼잡도를 업데이트
+                updateCongestionInfoInDatabase(storeId, congestionInfo);
+
+                Log.d("Debug", "Search orders for storeId: " + storeId + ", startTime: " + dateFormat.format(fiveMinutesAgo) + ", endTime: " + currentDateTime);
+
+            }
+
+        public void updateCongestionInfoInDatabase(int storeId, int congestionInfo) {
+            // StoreDBOpenHelper를 사용하여 데이터베이스 업데이트
+            StoreDBOpenHelper dbHelper = new StoreDBOpenHelper(requireContext());
+            dbHelper.updateCongestionInfo(storeId, congestionInfo);
+        }
+
     }
+
 
 //    private int getCongestionImg(int storeId) {
 //        if (storeId == 1) {
