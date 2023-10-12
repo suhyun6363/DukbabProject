@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
@@ -52,11 +53,14 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
     private boolean isHeartSelected = false;
     private CartDTO cartItem;
     private int quantityInt = 1;
+    private HomeActivity homeActivity;
+    private int heartFlag;
 
-    public static OptionDrawerFragment newInstance(MenuDTO menu) {
+    public static OptionDrawerFragment newInstance(MenuDTO menu, int heartFlag) {
         OptionDrawerFragment fragment = new OptionDrawerFragment();
         Bundle args = new Bundle();
         args.putParcelable("menu", menu);
+        args.putInt("heartFlag", heartFlag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -89,6 +93,7 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
 
         Bundle args = getArguments();
         if (args != null) {
+            heartFlag = args.getInt("heartFlag");
             menu = args.getParcelable("menu");
             // menu 객체를 사용하여 필요한 초기화 작업 수행
             menuImg.setImageResource(menu.getImageResourceId());
@@ -159,6 +164,15 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
                         transaction.replace(R.id.main_content, homeFragment);
                         transaction.commit();
 
+                        if(heartFlag == 1) {
+                            // UI를 변경하려면 Activity의 메소드를 호출
+                            if (getActivity() instanceof HomeActivity) {
+                                HomeActivity homeActivity = (HomeActivity) getActivity();
+                                homeActivity.switchToHomeFragment(); // 메소드 호출로 UI 변경
+                                heartFlag = 0;
+                            }
+                        }
+
                         // 모달 다이얼로그 표시
                         showCartConfirmationDialog();
 
@@ -178,21 +192,6 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
 
                 }
             });
-
-            // "주문하기" 버튼 클릭 이벤트 처리
-            btnCartToOrder.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    HomeFragment homeFragment = (HomeFragment) getParentFragmentManager().findFragmentByTag("HomeFragmentTag");
-
-                    if (homeFragment != null) {
-                        homeFragment.processOrder();
-                    } else {
-                        // HomeFragment을 찾지 못한 경우 에러 처리 또는 로깅을 수행
-                    }
-                }
-            });
-
 
             // 하트 이미지 클릭 이벤트 처리
             heartButton.setOnClickListener(new View.OnClickListener() {
