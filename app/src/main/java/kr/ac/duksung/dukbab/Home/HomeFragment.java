@@ -26,12 +26,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
+import kr.ac.duksung.dukbab.db.ReviewDBOpenHelper;
 
 public class HomeFragment extends Fragment {
     private TabLayout tabLayout;
@@ -61,9 +67,80 @@ public class HomeFragment extends Fragment {
 
         // 데이터베이스에서 cartItems 가져오기
         cartList = dbHelper.getCartItems();
+    }
 
-        // RecyclerView 어댑터 초기화
-        cartAdapter = new CartAdapter(cartList);
+    public void processOrder() {
+        // Cart 데이터를 가져올 DBHelper를 생성
+        CartDBOpenHelper cartDBOpenHelper = new CartDBOpenHelper(requireContext());
+
+        // Order 데이터를 저장할 DBHelper를 생성
+        OrderDBOpenHelper orderDBOpenHelper = new OrderDBOpenHelper(requireContext());
+
+        // 데이터베이스 연결을 가져옴
+        SQLiteDatabase cartDB = cartDBOpenHelper.getReadableDatabase();
+        SQLiteDatabase orderDB = orderDBOpenHelper.getWritableDatabase();
+
+        // cart.db에서 orders.db에 복사할 데이터를 선택
+        String[] columns = {
+                CartDBOpenHelper.COLUMN_EMAIL,
+                CartDBOpenHelper.COLUMN_NICKNAME,
+                CartDBOpenHelper.COLUMN_STORE_ID,
+                CartDBOpenHelper.COLUMN_MENU_NAME,
+                CartDBOpenHelper.COLUMN_MENU_OPTION,
+                CartDBOpenHelper.COLUMN_MENU_PRICE,
+                CartDBOpenHelper.COLUMN_MENU_QUANTITY,
+        };
+
+        int totalOrderPrice = 0;
+
+        // cart.db에서 데이터를 읽어와서 orders.db로 복사
+        Cursor cursor = cartDB.query(CartDBOpenHelper.TABLE_NAME, columns, null, null, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                ContentValues values = new ContentValues();
+                values.put(OrderDBOpenHelper.COLUMN_EMAIL, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_EMAIL)));
+                values.put(OrderDBOpenHelper.COLUMN_NICKNAME, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_NICKNAME)));
+                values.put(OrderDBOpenHelper.COLUMN_STORE_ID, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_STORE_ID)));
+                values.put(OrderDBOpenHelper.COLUMN_MENU_NAME, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_NAME)));
+                values.put(OrderDBOpenHelper.COLUMN_MENU_OPTION, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_OPTION)));
+                values.put(OrderDBOpenHelper.COLUMN_MENU_PRICE, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_PRICE)));
+                values.put(OrderDBOpenHelper.COLUMN_MENU_QUANTITY, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_QUANTITY)));
+
+                // 메뉴 가격과 수량을 가져옴
+                String menuPriceString = cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_PRICE));
+                int menuPrice = Integer.parseInt(menuPriceString.replaceAll("[^0-9]", "")); // "￦ 11000"에서 숫자만 추출
+
+                int menuQuantity = Integer.parseInt(cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_QUANTITY)));
+
+                // 해당 메뉴의 총 가격을 계산하고 누적
+                int totalPrice = menuPrice * menuQuantity;
+                totalOrderPrice += totalPrice; // 총 주문 가격에 누적
+
+                // orders.db에 데이터 추가
+                values.put(OrderDBOpenHelper.COLUMN_TOTAL_PRICE, String.valueOf(totalOrderPrice)); // 메뉴의 총 가격 저장
+
+                // 현재 날짜와 시간을 가져오는 부분
+                Calendar calendar = Calendar.getInstance();
+                Date currentDate = calendar.getTime();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String orderDate = dateFormat.format(currentDate);
+                values.put(OrderDBOpenHelper.COLUMN_ORDER_DATE, orderDate);
+
+
+                long result = orderDB.insert(OrderDBOpenHelper.TABLE_NAME, null, values);
+            }
+            cursor.close(); // 커서를 닫음
+        }
+
+        // cart.db 초기화
+        cartDBOpenHelper.clearCartDatabase();
+
+        // 데이터베이스 연결 종료
+        cartDB.close();
+        orderDB.close();
+
+        // 사용자에게 메시지 표시 또는 다음 화면으로 이동 등의 작업 수행
+        Toast.makeText(getActivity(), "주문 화면으로 넘어갑니다", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -76,7 +153,8 @@ public class HomeFragment extends Fragment {
         // RecyclerView 초기화
         cartRecyclerView = view.findViewById(R.id.cart);
 
-        // RecyclerView에 어댑터 설정
+        // Adapter 초기화 및 RecyclerView에 연결
+        cartAdapter = new CartAdapter(cartList, this);
         cartRecyclerView.setAdapter(cartAdapter);
 
         // RecyclerView에 레이아웃 매니저 설정
@@ -128,101 +206,28 @@ public class HomeFragment extends Fragment {
         Bundle args = getArguments();
         if(args != null) {
             cartItem = args.getParcelable("cartItem");
-            cartList.add(cartItem);
-            cartAdapter = new CartAdapter(cartList);
+            cartAdapter = new CartAdapter(cartList, this);
             cartRecyclerView.setAdapter(cartAdapter);
             cartRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
             cartAdapter.notifyDataSetChanged();
 
-            totalCountTextView.setText("총 " + cartList.size() + "개");
-
             removeAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     removeAllClicked(view);
+                    updateTotalPriceAndCount();
+
                 }
             });
-
-            // 주문 버튼 클릭 리스너 설정
-            orderBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
-                    // Cart 데이터를 가져올 DBHelper를 생성
-                    CartDBOpenHelper cartDBOpenHelper = new CartDBOpenHelper(requireContext());
-
-                    // Order 데이터를 저장할 DBHelper를 생성
-                    OrderDBOpenHelper orderDBOpenHelper = new OrderDBOpenHelper(requireContext());
-
-                    // 데이터베이스 연결을 가져옴
-                    SQLiteDatabase cartDB = cartDBOpenHelper.getReadableDatabase();
-                    SQLiteDatabase orderDB = orderDBOpenHelper.getWritableDatabase();
-
-                    // cart.db에서 orders.db에 복사할 데이터를 선택
-                    String[] columns = {
-                            CartDBOpenHelper.COLUMN_EMAIL,
-                            CartDBOpenHelper.COLUMN_NICKNAME,
-                            CartDBOpenHelper.COLUMN_STORE_ID,
-                            CartDBOpenHelper.COLUMN_MENU_NAME,
-                            CartDBOpenHelper.COLUMN_MENU_OPTION,
-                            CartDBOpenHelper.COLUMN_MENU_PRICE,
-                            CartDBOpenHelper.COLUMN_MENU_QUANTITY,
-                    };
-
-                    int totalOrderPrice = 0;
-
-                    // cart.db에서 데이터를 읽어와서 orders.db로 복사
-                    Cursor cursor = cartDB.query(CartDBOpenHelper.TABLE_NAME, columns, null, null, null, null, null);
-                    if (cursor != null) {
-                        while (cursor.moveToNext()) {
-                            ContentValues values = new ContentValues();
-                            values.put(OrderDBOpenHelper.COLUMN_EMAIL, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_EMAIL)));
-                            values.put(OrderDBOpenHelper.COLUMN_NICKNAME, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_NICKNAME)));
-                            //values.put(OrderDBOpenHelper.COLUMN_SELECTED_RESTAURANT, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_SELECTED_RESTAURANT)));
-                            values.put(OrderDBOpenHelper.COLUMN_MENU_NAME, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_NAME)));
-                            values.put(OrderDBOpenHelper.COLUMN_MENU_OPTION, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_OPTION)));
-                            values.put(OrderDBOpenHelper.COLUMN_MENU_PRICE, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_PRICE)));
-                            values.put(OrderDBOpenHelper.COLUMN_MENU_QUANTITY, cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_QUANTITY)));
-
-                            // 메뉴 가격과 수량을 가져옴
-                            int menuPrice = Integer.parseInt(cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_PRICE)));
-                            int menuQuantity = Integer.parseInt(cursor.getString(cursor.getColumnIndex(CartDBOpenHelper.COLUMN_MENU_QUANTITY)));
-
-                            // 해당 메뉴의 총 가격을 계산하고 누적
-                            int totalPrice = menuPrice * menuQuantity;
-                            totalOrderPrice += totalPrice; // 총 주문 가격에 누적
-
-                            // orders.db에 데이터 추가
-                            values.put(OrderDBOpenHelper.COLUMN_TOTAL_PRICE, String.valueOf(totalOrderPrice)); // 메뉴의 총 가격 저장
-                            long result = orderDB.insert(OrderDBOpenHelper.TABLE_NAME, null, values);
-                        }
-                        cursor.close(); // 커서를 닫음
-                    }
-
-
-                    // cart.db 초기화
-                    cartDBOpenHelper.clearCartDatabase(); // 새로운 메소드 호출
-
-                    // 데이터베이스 연결 종료
-                    cartDB.close();
-                    orderDB.close();
-
-                    // 사용자에게 메시지 표시 또는 다음 화면으로 이동 등의 작업 수행
-                    Toast.makeText(getActivity(), "주문 화면으로 넘어갑니다", Toast.LENGTH_SHORT).show();
-
-                    // 장바구니 RecyclerView 갱신
-                    cartList.clear();
-                    cartAdapter.notifyDataSetChanged();
-                    // 주문이 완료되면 다음 Activity로 이동
-                }
-            });
+            updateTotalPriceAndCount();
         }
 
         else {
             orderBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (cartList.isEmpty()) {
                     // cartList가 비어있을 때 AlertDialog를 표시
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("장바구니가 비어 있습니다")
@@ -233,7 +238,19 @@ public class HomeFragment extends Fragment {
                                 }
                             })
                             .show();
+                    }
+                    else {
+                        Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
+
+                        processOrder();
+
+                        // 장바구니 RecyclerView 갱신
+                        cartList.clear();
+                        cartAdapter.notifyDataSetChanged();
+                        // 주문이 완료되면 다음 Activity로 이동
+                    }
                 }
+
             });
         }
 
@@ -270,5 +287,34 @@ public class HomeFragment extends Fragment {
         cartList.clear();
         // RecyclerView 업데이트
         cartAdapter.notifyDataSetChanged();
+
+        // CartDBOpenHelper 인스턴스를 생성
+        CartDBOpenHelper dbOpenHelper = new CartDBOpenHelper(requireContext()); // 여기서 'v.getContext()'를 사용하여 Context를 가져옵니다.
+        dbOpenHelper.clearCartDatabase();
+
+        // 총 가격 및 수량 업데이트
+        updateTotalPriceAndCount();
+    }
+
+    // 메서드를 추가하여 totalPriceTextView와 totalCountTextView 업데이트
+    public void updateTotalPriceAndCount() {
+        int totalMenuPrice = 0;
+        int totalQuantity = 0;
+
+        // cartList를 반복하면서 합을 계산
+        for (CartDTO cartItem : cartList) {
+            int listMenuPrice = Integer.parseInt(cartItem.getMenuPrice().replace(",", ""));
+            int listMenuQuantity = cartItem.getMenuQuantity();
+
+            // 각 항목의 가격과 수량을 곱하여 합계에 더함
+            totalMenuPrice += (listMenuPrice * listMenuQuantity);
+            totalQuantity += listMenuQuantity;
+        }
+
+        // 합계를 포맷팅하여 TextView에 표시
+        String formattedTotalPrice = String.format("%,d", totalMenuPrice); // 가격을 포맷팅
+        totalPriceTextView.setText(formattedTotalPrice);
+
+        totalCountTextView.setText(String.valueOf(totalQuantity)); // 수량은 문자열로 설정
     }
 }
