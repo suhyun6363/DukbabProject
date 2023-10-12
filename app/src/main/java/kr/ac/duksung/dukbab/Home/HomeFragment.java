@@ -37,7 +37,6 @@ import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
-import kr.ac.duksung.dukbab.db.ReviewDBOpenHelper;
 
 public class HomeFragment extends Fragment {
     private TabLayout tabLayout;
@@ -225,12 +224,11 @@ public class HomeFragment extends Fragment {
             updateTotalPriceAndCount();
         }
 
-        else {
-            orderBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        orderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    if (cartList.isEmpty()) {
+                if (cartList.isEmpty()) {
                     // cartList가 비어있을 때 AlertDialog를 표시
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("장바구니가 비어 있습니다")
@@ -241,26 +239,26 @@ public class HomeFragment extends Fragment {
                                 }
                             })
                             .show();
-                    }
-                    else {
-                        Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
+                } else {
+                    Log.d(TAG, "btnCartToOrder 클릭됨"); // 로그 메시지 추가
 
-                        processOrder();
+                    processOrder();
 
-                        Intent intent = new Intent(getContext(), OrderActivity.class);
-                        intent.putParcelableArrayListExtra("cartList", (ArrayList<CartDTO>) cartList);
-                        intent.putExtra("totalPrice", totalPrice);
-                        startActivity(intent);
+                    int totalMenuPrice = updateTotalPriceAndCount();
+                    Intent intent = new Intent(getContext(), OrderActivity.class);
+                    intent.putParcelableArrayListExtra("cartList", (ArrayList<CartDTO>) cartList);
+                    intent.putExtra("totalPrice", totalMenuPrice);
+                    startActivity(intent);
 
-                        // 장바구니 RecyclerView 갱신
-                        cartList.clear();
-                        cartAdapter.notifyDataSetChanged();
-                        // 주문이 완료되면 다음 Activity로 이동
-                    }
+                    // 장바구니 RecyclerView 갱신
+                    cartList.clear();
+                    cartAdapter.notifyDataSetChanged();
+                    // 주문이 완료되면 다음 Activity로 이동
                 }
+            }
 
-            });
-        }
+        });
+
 
         // Store 데이터 삽입
         Database database = Database.getInstance();
@@ -305,8 +303,9 @@ public class HomeFragment extends Fragment {
         updateTotalPriceAndCount();
     }
 
+    //추가수정필요
     // 메서드를 추가하여 totalPriceTextView와 totalCountTextView 업데이트
-    public void updateTotalPriceAndCount() {
+    public int updateTotalPriceAndCount() {
         int totalMenuPrice = 0;
         int totalQuantity = 0;
 
@@ -320,10 +319,14 @@ public class HomeFragment extends Fragment {
             totalQuantity += listMenuQuantity;
         }
 
+        String formattedTotalCount = String.format("%d개", totalQuantity); // 가격을 포맷팅
+        totalCountTextView.setText(formattedTotalCount); // 수량은 문자열로 설정
+
         // 합계를 포맷팅하여 TextView에 표시
-        String formattedTotalPrice = String.format("%,d", totalMenuPrice); // 가격을 포맷팅
+        String formattedTotalPrice = String.format("%,d원", totalMenuPrice); // 가격을 포맷팅
         totalPriceTextView.setText(formattedTotalPrice);
 
-        totalCountTextView.setText(String.valueOf(totalQuantity)); // 수량은 문자열로 설정
+        return totalMenuPrice;
     }
+
 }

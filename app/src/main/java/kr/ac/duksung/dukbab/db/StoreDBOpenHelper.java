@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 public class StoreDBOpenHelper extends SQLiteOpenHelper {
+    public static final String TABLE_NAME = "";
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "Store.db";
     public static final String DB_TABLE_STORE = "Store";

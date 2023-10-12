@@ -33,11 +33,9 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //context = this;
         intent = getIntent();
-        // List<CartDTO> 객체를 추출
-        //cartList = intent.getParcelableArrayListExtra("cartList");
         totalPrice = intent.getIntExtra("totalPrice", 0);
+        // totalPrice를 사용하여 원하는 작업을 수행
 
         Log.d("OrderActivity", "totalPrice" + totalPrice);
         onClick_request();
@@ -114,5 +112,6 @@ public class OrderActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 }).requestPayment();
+
     }
 }
