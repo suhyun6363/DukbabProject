@@ -53,13 +53,7 @@ public class ReviewwriteActivity extends AppCompatActivity {
         restaurantSpinner = findViewById(R.id.restaurantSpinner);
 
         // Spinner에 음식점명 목록을 설정
-<<<<<<< HEAD
-
-        String[] restaurantNames = {"오늘의 메뉴", "마라탕", "분식", "수제돈까스", "파스타"};
-
-=======
         String[] restaurantNames = {"오늘의 메뉴", "마라탕", "분식", "수제 돈까스", "파스타"};
->>>>>>> 4dcd595ad6e0ea48e614a6708a4d77c2dea969f1
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, restaurantNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         restaurantSpinner.setAdapter(adapter);
