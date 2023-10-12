@@ -37,6 +37,7 @@ public class TodayMenuFragment extends Fragment {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://172.20.26.157:5000/") // Flask API의 기본 URL을 입력하세요
+
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
