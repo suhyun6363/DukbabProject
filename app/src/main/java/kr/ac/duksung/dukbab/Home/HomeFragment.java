@@ -322,8 +322,8 @@ public class HomeFragment extends Fragment {
 
         // 합계를 포맷팅하여 TextView에 표시
         String formattedTotalPrice = String.format("%,d", totalMenuPrice); // 가격을 포맷팅
-        totalPriceTextView.setText(formattedTotalPrice);
+        totalPriceTextView.setText(formattedTotalPrice + "원");
 
-        totalCountTextView.setText(String.valueOf(totalQuantity)); // 수량은 문자열로 설정
+        totalCountTextView.setText(String.valueOf("총 " + totalQuantity + "개")); // 수량은 문자열로 설정
     }
 }

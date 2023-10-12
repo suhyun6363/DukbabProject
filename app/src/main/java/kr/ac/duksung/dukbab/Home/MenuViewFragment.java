@@ -36,6 +36,7 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
     public OptionDrawerFragment optionDrawerFragment;
     private static final String ARG_STORE_ID = "storeId";
     private int storeId;
+    private int heartFlag = 0;
 
     // MenuViewFragment를 생성하고 필요한 데이터를 전달하는 정적 메서드
     public static MenuViewFragment newInstance(int storeId) {
@@ -47,7 +48,7 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
     }
 
     public void openOptionDrawerFragment(MenuDTO menu) {
-        optionDrawerFragment = OptionDrawerFragment.newInstance(menu);
+        optionDrawerFragment = OptionDrawerFragment.newInstance(menu, heartFlag);
         optionDrawerFragment.show(getParentFragmentManager(), OptionDrawerFragment.TAG);
     }
 

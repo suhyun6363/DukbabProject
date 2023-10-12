@@ -19,10 +19,12 @@ public class HeartAdapter extends RecyclerView.Adapter<HeartAdapter.HeartViewHol
 
     private List<MenuDTO> heartMenuList;
     private FragmentManager fragmentManager;
+    private int heartFlag;
 
-    public HeartAdapter(FragmentManager fragmentManager, List<MenuDTO> heartMenuList) {
+    public HeartAdapter(FragmentManager fragmentManager, List<MenuDTO> heartMenuList, int heartFlag) {
         this.fragmentManager = fragmentManager;
         this.heartMenuList = heartMenuList;
+        this.heartFlag = heartFlag;
     }
 
     @NonNull
@@ -45,7 +47,7 @@ public class HeartAdapter extends RecyclerView.Adapter<HeartAdapter.HeartViewHol
             @Override
             public void onClick(View view) {
                 MenuDTO menu = heartMenuList.get(holder.getAdapterPosition());
-                OptionDrawerFragment optionDrawerFragment = OptionDrawerFragment.newInstance(menu);
+                OptionDrawerFragment optionDrawerFragment = OptionDrawerFragment.newInstance(menu, heartFlag);
                 optionDrawerFragment.show(fragmentManager, OptionDrawerFragment.TAG);
             }
         });

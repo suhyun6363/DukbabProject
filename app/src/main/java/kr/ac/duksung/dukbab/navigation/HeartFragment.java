@@ -28,6 +28,7 @@ public class HeartFragment extends Fragment {
     private HeartAdapter heartAdapter;
     private RecyclerView heartView;
     private FragmentManager context;
+    private int heartFlag = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,11 +38,9 @@ public class HeartFragment extends Fragment {
         heartView = view.findViewById(R.id.heartView);
         Button recommendButton = view.findViewById(R.id.recommendButton);
 
-        heartAdapter = new HeartAdapter(context, heartMenuList);
+        heartAdapter = new HeartAdapter(context, heartMenuList, heartFlag);
         heartView.setAdapter(heartAdapter);
         heartView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-
-        Log.d("HeartFragment", "onCreate 실행");
 
         // recommendButton 클릭 시 이벤트 처리
         recommendButton.setOnClickListener(new View.OnClickListener() {
