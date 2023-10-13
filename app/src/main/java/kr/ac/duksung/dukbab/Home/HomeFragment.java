@@ -175,7 +175,7 @@ public class HomeFragment extends Fragment  {
         orderBtn = view.findViewById(R.id.order_btn);
 
         // 추천 탭 추가
-        tabLayout.addTab(tabLayout.newTab().setText("추천"));
+        //tabLayout.addTab(tabLayout.newTab().setText("추천"));
         tabLayout.addTab(tabLayout.newTab().setText("오늘의 메뉴"));
         tabLayout.addTab(tabLayout.newTab().setText("마라탕"));
         tabLayout.addTab(tabLayout.newTab().setText("분식"));

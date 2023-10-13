@@ -22,7 +22,7 @@ public class MenuPageAdapter extends FragmentStateAdapter{
         super(activity);
         this.tabLayout = tabLayout;
         this.storeIds = new int[]{
-                1, // 추천
+               // 1, // 추천
                 2, // 오늘의 메뉴
                 3, // 마라탕
                 4, // 분식

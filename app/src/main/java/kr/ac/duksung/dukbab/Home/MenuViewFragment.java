@@ -77,9 +77,6 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
             imageView.setImageResource(getCongestionImg(storeId));
 
             switch (storeId) {
-                case 1:
-                    tabText.setText("추천");
-                    break;
                 case 2:
                     tabText.setText("오늘의 메뉴");
                     break;
