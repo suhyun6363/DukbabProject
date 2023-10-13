@@ -171,11 +171,9 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-<<<<<<< HEAD
+
             int storeId = 4; // 원하는 상점의 ID를 지정
-=======
-            int storeId = 3; // 원하는 상점의 ID를 지정
->>>>>>> 3a6b4eb02111a414f38360b37e435c1aaacc47af
+
             CongestionCalculator calculator = new CongestionCalculator();
             calculator.calculateAndSetCongestionInfo(storeId);
 
