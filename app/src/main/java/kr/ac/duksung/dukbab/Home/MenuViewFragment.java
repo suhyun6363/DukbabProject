@@ -1,7 +1,5 @@
 package kr.ac.duksung.dukbab.Home;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -10,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import androidx.fragment.app.Fragment;
@@ -22,20 +19,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.GridSpaceItemDecoration;
 import kr.ac.duksung.dukbab.R;
 import kr.ac.duksung.dukbab.db.MenuDBOpenHelper;
-import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
 import kr.ac.duksung.dukbab.db.StoreDBOpenHelper;
 
 public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapterListener {
-//    private Map<String, HomeFragment.StoreCongestion> storeCongestionMap = new HashMap<>();
+    //    private Map<String, HomeFragment.StoreCongestion> storeCongestionMap = new HashMap<>();
     public static final String TAG = "MenuViewFragment";
 
     private ImageView imageView;
@@ -47,14 +40,17 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
     private CartDTO cartItem;
     public OptionDrawerFragment optionDrawerFragment;
     private static final String ARG_STORE_ID = "storeId";
+    private static final String ARG_COGESTION = "congestionInfo";
+
     private int storeId;
     private int heartFlag = 0;
 
     // MenuViewFragment를 생성하고 필요한 데이터를 전달하는 정적 메서드
-    public static MenuViewFragment newInstance(int storeId) {
+    public static MenuViewFragment newInstance(int storeId, int congestionInfo) {
         MenuViewFragment fragment = new MenuViewFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_STORE_ID, storeId); // storeId를 Bundle에 추가
+        args.putInt(ARG_COGESTION, congestionInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,9 +72,10 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         Bundle args = getArguments();
         if (args != null) {
             int storeId = args.getInt(ARG_STORE_ID);
+            int congestionInfo = args.getInt(ARG_COGESTION);
 
             List<MenuDTO> menuList = getMenuData(storeId);
-//            imageView.setImageResource(getCongestionImg(storeId, "여유"));
+            imageView.setImageResource(getCongestionImg(storeId, congestionInfo));
 
             switch (storeId) {
                 case 1:
@@ -103,6 +100,7 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
                     tabText.setText("기타 가게");
                     break;
             }
+
             // RecyclerView에 메뉴 데이터 설정
             menuAdapter = new MenuAdapter(menuList, getParentFragmentManager()); //
             menuAdapter.setMenuAdapterListener(this);
@@ -173,7 +171,7 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            int storeId = 5; // 원하는 상점의 ID를 지정
+            int storeId = 4; // 원하는 상점의 ID를 지정
             CongestionCalculator calculator = new CongestionCalculator();
             calculator.calculateAndSetCongestionInfo(storeId);
         }
@@ -242,7 +240,17 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         }
 
     }
-
+    private int getCongestionImg(int storeId, int congestionInfo) {
+        if (storeId == 1) {
+            return R.drawable.ic_heart_fill;
+        } else if (congestionInfo == 1) {
+            return R.drawable.img_redcircle;
+        } else if (congestionInfo == 2) {
+            return R.drawable.img_yellowcircle;
+        } else {
+            return R.drawable.img_greencircle;
+        }
+    }
 
 //    private int getCongestionImg(int storeId) {
 //        if (storeId == 1) {
@@ -261,8 +269,6 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
 //        // 혼잡도 이미지를 기본 이미지로 설정하거나, 다른 로직에 따라 적절한 이미지 리소스 ID 반환
 //        return R.drawable.img_greencircle;
 //    }
-
-
 
     private List<MenuDTO> getMenuData(int storeId) {
         List<MenuDTO> menuList = new ArrayList<>();
