@@ -107,7 +107,10 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
                     break;
             }
 
+
+
             // RecyclerView에 메뉴 데이터 설정
+            menuAdapter = new MenuAdapter(menuList, getParentFragmentManager());
             menuAdapter.setMenuAdapterListener(this);
             recyclerView.setAdapter(menuAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
