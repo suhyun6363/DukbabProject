@@ -1,6 +1,7 @@
 package kr.ac.duksung.dukbab.db;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -51,8 +52,13 @@ public class OrderDBOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
+    // 최근 주문 내역을 가져오는 메서드
+    public Cursor getLatestOrder() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_NAME + " ORDER BY orderId DESC LIMIT 1";
+
+        return db.rawQuery(query, null);
+    }
 }
-
-
-
-

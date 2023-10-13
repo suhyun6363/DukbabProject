@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
@@ -191,21 +192,6 @@ public class OptionDrawerFragment extends BottomSheetDialogFragment {
 
                 }
             });
-
-            // "주문하기" 버튼 클릭 이벤트 처리
-            btnCartToOrder.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    HomeFragment homeFragment = (HomeFragment) getParentFragmentManager().findFragmentByTag("HomeFragmentTag");
-
-                    if (homeFragment != null) {
-                        homeFragment.processOrder();
-                    } else {
-                        // HomeFragment을 찾지 못한 경우 에러 처리 또는 로깅을 수행
-                    }
-                }
-            });
-
 
             // 하트 이미지 클릭 이벤트 처리
             heartButton.setOnClickListener(new View.OnClickListener() {

@@ -1,5 +1,7 @@
 package kr.ac.duksung.dukbab.Home;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,46 +43,61 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
+        // 데이터베이스 헬퍼 클래스 생성
+        CartDBOpenHelper cartDBOpenHelper = new CartDBOpenHelper(holder.itemView.getContext());
 
-        // 해당 위치(position)의 cartItem을 가져옵니다.
+        // 데이터베이스 연결을 가져옴
+        SQLiteDatabase cartDB = cartDBOpenHelper.getReadableDatabase();
+
+        // 데이터를 쿼리하기 위한 쿼리 문자열 (여기서는 모든 레코드를 가져오는 예제입니다)
+        String query = "SELECT * FROM " + CartDBOpenHelper.TABLE_NAME;
+
+        // 데이터를 쿼리하고 결과를 커서에 저장
+        Cursor cursor = cartDB.rawQuery(query, null);
         CartDTO cartItem = cartList.get(position);
 
-        // cartItem의 정보를 ViewHolder에 설정합니다.
-        holder.menuName.setText(cartItem.getMenuName());
-        holder.menuPrice.setText("￦ " + cartItem.getMenuPrice());
-        holder.optionList.setText(cartItem.getSelectedOptions().toString());
-        int quantityInt = cartItem.getMenuQuantity();
-        holder.quantityTextView.setText(Integer.toString(quantityInt));
+        // 커서를 원하는 위치로 이동
+        if (cursor.moveToPosition(position)) {
+            // 커서에서 데이터 추출
+            String menuName = cursor.getString(cursor.getColumnIndex("menuName"));
+            Integer menuQuantity = cursor.getInt(cursor.getColumnIndex("menuQuantity"));
+            String totalMenuPricee = cursor.getString(cursor.getColumnIndex("menuPrice"));
+            String totalMenuPrice = totalMenuPricee.replace("￦", "").trim(); // "￦" 기호 제거 및 공백 제거
+            int menuPriceInt = Integer.parseInt(totalMenuPrice.replace(",", "")); // 특수 문자 제거
+            String formattedTotalMenuPrice = String.format("%,d", menuPriceInt);
+            holder.menuPrice.setText("￦ " + cartItem.getMenuPrice());
+            holder.menuName.setText(menuName);
+            holder.totalPriceTextView.setText(formattedTotalMenuPrice);
+            holder.optionList.setText(cartItem.getSelectedOptions().toString());
+            holder.quantityTextView.setText(Integer.toString(menuQuantity));
 
-        int menuPriceInt = Integer.parseInt(cartItem.getMenuPrice().replace(",", "")); // 가격에서 특수 문자 제거
-        int optionTotalPriceInt = menuPriceInt * quantityInt; // 수량과 가격을 곱하여 총합 가격 계산
-        // 총합 가격을 숫자 포맷팅을 사용하여 표시
-        String formattedOptionTotalPrice = String.format("%d", optionTotalPriceInt);
-        holder.totalPriceTextView.setText(formattedOptionTotalPrice);
+            if(menuQuantity > 1) {
+                holder.minusButton.setImageResource(R.drawable.ic_minus);
+                holder.minusButton.setEnabled(true);
+            }
+            else {
+                holder.minusButton.setImageResource(R.drawable.ic_minus_default);
+                holder.minusButton.setEnabled(false);
+            }
+        }
 
-        if(quantityInt > 1) {
-            holder.minusButton.setImageResource(R.drawable.ic_minus);
-            holder.minusButton.setEnabled(true);
-        }
-        else {
-            holder.minusButton.setImageResource(R.drawable.ic_minus_default);
-            holder.minusButton.setEnabled(false);
-        }
+
 
 
         holder.minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentQuantity = cartItem.getMenuQuantity();
-                if (currentQuantity > 1) {
+                Integer menuQuantity = cursor.getInt(cursor.getColumnIndex("menuQuantity"));
+
+                if (menuQuantity > 1) {
                     // 1. 데이터베이스의 menuquantity를 감소시킴
-                    int newQuantity = currentQuantity - 1;
+                    int newQuantity = menuQuantity - 1;
 
                     // CartDBOpenHelper 인스턴스를 생성
                     CartDBOpenHelper dbOpenHelper = new CartDBOpenHelper(v.getContext()); // 여기서 'v.getContext()'를 사용하여 Context를 가져옵니다.
 
                     // CartDBOpenHelper 인스턴스를 사용하여 업데이트
-                    dbOpenHelper.updateCartItemQuantity(cartItem, newQuantity);
+                    dbOpenHelper.updateCartItemQuantity(cartItem, menuQuantity);
 
                     // 2. 변경된 menuquantity를 가져와서 화면에 업데이트
                     cartItem.setMenuQuantity(newQuantity);
@@ -97,16 +114,16 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             public void onClick(View view) {
                 int currentQuantity = cartItem.getMenuQuantity();
                 // 1. 데이터베이스의 menuquantity를 감소시킴
-                int newQuantity = currentQuantity + 1;
+                int menuQuantity = currentQuantity + 1;
 
                 // CartDBOpenHelper 인스턴스를 생성
                 CartDBOpenHelper dbOpenHelper = new CartDBOpenHelper(view.getContext()); // 여기서 'v.getContext()'를 사용하여 Context를 가져옵니다.
 
                 // CartDBOpenHelper 인스턴스를 사용하여 업데이트
-                dbOpenHelper.updateCartItemQuantity(cartItem, newQuantity);
+                dbOpenHelper.updateCartItemQuantity(cartItem, menuQuantity);
 
                 // 2. 변경된 menuquantity를 가져와서 화면에 업데이트
-                cartItem.setMenuQuantity(newQuantity);
+                cartItem.setMenuQuantity(menuQuantity);
                 notifyDataSetChanged();
                 if (homeFragment != null) {
                     homeFragment.updateTotalPriceAndCount();

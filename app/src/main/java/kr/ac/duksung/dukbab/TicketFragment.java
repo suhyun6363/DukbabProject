@@ -1,4 +1,6 @@
 package kr.ac.duksung.dukbab;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import kr.ac.duksung.dukbab.Home.CartDTO;
 import kr.ac.duksung.dukbab.R;
+import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
+import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
+
 import android.widget.Toast;
 import android.content.Intent;
 
@@ -45,6 +52,16 @@ public class TicketFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ticket, container, false);
 
+        // 데이터베이스 헬퍼 클래스 생성
+        OrderDBOpenHelper orderDBOpenHelper = new OrderDBOpenHelper(getContext());
+
+        // 데이터를 쿼리하기 위한 쿼리 문자열 (여기서는 모든 레코드를 가져오는 예제입니다)
+        String query = "SELECT * FROM " + OrderDBOpenHelper.TABLE_NAME;
+
+        // 최근 주문 내역을 가져옴
+        Cursor cursor = orderDBOpenHelper.getLatestOrder();
+
+
         // 티켓에 표시할 TextView와 Button 찾기
         storeNameTextView = view.findViewById(R.id.storeNameTextView);
         foodNameTextView = view.findViewById(R.id.foodNameTextView);
@@ -52,11 +69,20 @@ public class TicketFragment extends Fragment {
         orderTimeTextView = view.findViewById(R.id.orderTimeTextView);
         confirmButton = view.findViewById(R.id.confirmButton);
 
-        // TextView에 데이터 설정
-        storeNameTextView.setText(storeName);
-        foodNameTextView.setText(foodName);
-        orderNumberTextView.setText("no." + orderNumber);
-        orderTimeTextView.setText(orderTime);
+        // 커서의 moveToFirst() 메소드를 호출하여 데이터가 있는지 확인
+        if (cursor.moveToFirst()) {
+            // 데이터베이스에서 데이터를 읽고 TextView에 설정
+            storeNameTextView.setText(cursor.getString(cursor.getColumnIndex("storeId")));
+            foodNameTextView.setText(cursor.getString(cursor.getColumnIndex("menuName")));
+            orderNumberTextView.setText("no." + cursor.getString(cursor.getColumnIndex("orderId")));
+            orderTimeTextView.setText(cursor.getString(cursor.getColumnIndex("orderDate")));
+        } else {
+            // 데이터베이스에 주문 내역이 없을 경우 메시지를 설정
+            storeNameTextView.setText("주문내역이 없습니다.");
+            foodNameTextView.setText("");
+            orderNumberTextView.setText("");
+            orderTimeTextView.setText("");
+        }
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override

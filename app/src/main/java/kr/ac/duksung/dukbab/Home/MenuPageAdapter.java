@@ -15,6 +15,7 @@ import kr.ac.duksung.dukbab.api.MyCallback;
 
 public class MenuPageAdapter extends FragmentStateAdapter{
     private final int[] storeIds;
+//    private final int[] congestionInfos;
     private final TabLayout tabLayout;
     private String jsonRecommendations;
 
@@ -36,13 +37,25 @@ public class MenuPageAdapter extends FragmentStateAdapter{
     @Override
     public Fragment createFragment(int position) {
         int storeId = getStoreIdByPosition(position);
-        Log.d("MenuPageAdapter", "storeId: "+storeId);
-        if(jsonRecommendations != null)
-            Log.d("MenuPageAdapter", "jsonRecommendationsAdapter: "+jsonRecommendations);
-        else
-            Log.d("MenuPageAdapter", "null입");
 
-        return MenuViewFragment.newInstance(storeId, jsonRecommendations);
+        int congestionInfo = getCongestionInfoByPosition(position);
+        return MenuViewFragment.newInstance(storeId, congestionInfo);
+    }
+
+    private int getCongestionInfoByPosition(int position) {
+        switch (position) {
+            case 1:
+                return 0; // 첫 번째 탭에 대한 혼잡 정보
+            case 2:
+            case 3:
+            case 4:
+                return 2;
+            case 5:
+            case 6:
+                return 1; // 두 번째부터 여섯 번째 탭까지는 혼잡 정보 2로 설정
+            default:
+                return 1; // 나머지 탭은 혼잡 정보 1로 설정
+        }
     }
 
     private int getStoreIdByPosition(int position) {

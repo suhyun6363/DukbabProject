@@ -140,12 +140,11 @@ public class Database{
     }
 //---------------------------------------------------------------------
     // 가게 데이터베이스
-    public void addStore(int storeId, String storeName, String congestionInfo) {
+    public void addStore(int storeId, String storeName) {
         if (!isStoreExists(storeName)) {   //중복 방지
             ContentValues values = new ContentValues();
             values.put(StoreDBOpenHelper.COLUMN_STORE_ID, storeId);
             values.put(StoreDBOpenHelper.COLUMN_STORE_NAME, storeName);
-            values.put(StoreDBOpenHelper.COLUMN_CONGESTION_INFO, congestionInfo);
             try {
                 openStoreDB(context); // 데이터베이스 열기
                 mStoreDB.insert(StoreDBOpenHelper.DB_TABLE_STORE, null, values);
@@ -494,4 +493,15 @@ public class Database{
             mDB.endTransaction(); // 트랜잭션 종료
         }
     }
+
+    public Cursor searchOrdersByStoreAndTime(int storeId, String startTime, String endTime) {
+        SQLiteDatabase db = mOrderDBOpenHelper.getReadableDatabase();
+        String[] columns = {mOrderDBOpenHelper.COLUMN_ORDER_ID};
+        String selection = mOrderDBOpenHelper.COLUMN_STORE_ID + " = ? AND " + mOrderDBOpenHelper.COLUMN_ORDER_DATE + " BETWEEN ? AND ?";
+        String[] selectionArgs = {String.valueOf(storeId), startTime, endTime};
+
+        Cursor cursor = db.query(mOrderDBOpenHelper.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+        return cursor;
+    }
+
 }
