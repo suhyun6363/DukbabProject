@@ -25,6 +25,9 @@ import android.widget.TextView;
 
 import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,8 +42,10 @@ import kr.ac.duksung.dukbab.db.CartDBOpenHelper;
 import kr.ac.duksung.dukbab.db.Database;
 import kr.ac.duksung.dukbab.db.OrderDBOpenHelper;
 import kr.ac.duksung.dukbab.db.ReviewDBOpenHelper;
+import kr.ac.duksung.dukbab.navigation.HeartFragment;
+import kr.ac.duksung.dukbab.navigation.RecommendActivity;
 
-public class HomeFragment extends Fragment implements MyCallback.RecommendationListener {
+public class HomeFragment extends Fragment  {
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private RecyclerView cartRecyclerView;
@@ -51,14 +56,6 @@ public class HomeFragment extends Fragment implements MyCallback.RecommendationL
     private List<CartDTO> cartList = new ArrayList<>();
     private int totalPrice = 10000;
     private String jsonRecommendations;
-    private MyCallback myCallback = new MyCallback(this);
-
-    @Override
-    public void onRecommendationsReceived(String jsonRecommendations) {
-        // MyCallback에서 전달받은 데이터를 처리
-        // 여기에서 jsonRecommendations을 사용할 수 있음
-        this.jsonRecommendations = jsonRecommendations;
-    }
 
     public static HomeFragment newInstance(CartDTO cartItem) {
         Bundle args = new Bundle();
@@ -186,6 +183,8 @@ public class HomeFragment extends Fragment implements MyCallback.RecommendationL
         tabLayout.addTab(tabLayout.newTab().setText("파스타"));
 
         // ViewPager에 어댑터 연결
+        if(jsonRecommendations !=null)
+            Log.d("Recommendation", "MenuAdapter에 전송 " + jsonRecommendations);
         MenuPageAdapter pageAdapter = new MenuPageAdapter(requireActivity(), tabLayout, jsonRecommendations);
         viewPager.setAdapter(pageAdapter);
 

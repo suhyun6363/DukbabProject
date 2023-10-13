@@ -8,6 +8,9 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.List;
+
 import kr.ac.duksung.dukbab.api.MyCallback;
 
 public class MenuPageAdapter extends FragmentStateAdapter{
@@ -35,7 +38,7 @@ public class MenuPageAdapter extends FragmentStateAdapter{
         int storeId = getStoreIdByPosition(position);
         Log.d("MenuPageAdapter", "storeId: "+storeId);
         if(jsonRecommendations != null)
-            Log.d("MenuPageAdapter", "jsonRecommendations: "+jsonRecommendations);
+            Log.d("MenuPageAdapter", "jsonRecommendationsAdapter: "+jsonRecommendations);
         else
             Log.d("MenuPageAdapter", "null입");
 

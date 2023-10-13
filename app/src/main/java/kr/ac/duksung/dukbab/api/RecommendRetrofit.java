@@ -7,6 +7,7 @@ import java.util.List;
 
 import kr.ac.duksung.dukbab.Home.HomeFragment;
 import kr.ac.duksung.dukbab.Home.MenuDTO;
+import kr.ac.duksung.dukbab.navigation.HeartFragment;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -48,11 +49,37 @@ public class RecommendRetrofit {
         // Retrofit 인터페이스 구현체 생성
         PostApiService postApiService = retrofit.create(PostApiService.class);
 
-        MyCallback.RecommendationListener listener = new HomeFragment(); // 또는 이 인터페이스를 구현한 다른 객체
-        MyCallback callback = new MyCallback(listener);
         // POST 요청 보내기
         Call<RecommendItem> call = postApiService.sendMenuIds(requestBody);
-        call.enqueue(callback);
+        call.enqueue(new Callback<RecommendItem>() {
+            @Override
+            public void onResponse(Call<RecommendItem> call, Response<RecommendItem> response) {
+                if (response.isSuccessful()) {
+                    RecommendItem item = response.body();
+                    List<Integer> recommendations = item.getNumbers();
 
+                    // 서버에서 받은 추천 숫자를 가공하여 StringBuilder에 추가
+                    StringBuilder result = new StringBuilder("추천 받은 숫자: ");
+                    for (int number : recommendations) {
+                        result.append(number).append(" ");
+                    }
+
+                    // 추천 받은 숫자를 로그에 출력
+                    Log.d("Recommendation", result.toString());
+                } else {
+                    // 서버 응답이 실패한 경우
+                    Log.d("Recommendation", "Failed to get data");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecommendItem> call, Throwable t) {
+                // 네트워크 요청 자체가 실패한 경우
+                t.printStackTrace();
+                Log.d("Recommendation", "Failed to connect to the server: " + t.getMessage());
+            }
+        });
     }
+
+
 }

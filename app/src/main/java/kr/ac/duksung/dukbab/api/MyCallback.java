@@ -51,10 +51,6 @@ public class MyCallback implements Callback<RecommendItem> {
         t.printStackTrace();
         Log.d("Recommendation", "Failed to connect to the server: " + t.getMessage());
     }
-
-    public String getJsonRecommendations() {
-        return jsonRecommendations;
-    }
 }
 
 

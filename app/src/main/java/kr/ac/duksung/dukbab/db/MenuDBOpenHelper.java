@@ -58,4 +58,23 @@ public class MenuDBOpenHelper extends SQLiteOpenHelper {
         db.close();
         return storeId;
     }
+
+    public String getMenuNameByMenuId(int menuId) {
+        String menuName = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_MENU_NAME};
+        String selection = COLUMN_MENU_ID + "=?";
+        String[] selectionArgs = {String.valueOf(menuId)};
+
+        Cursor cursor = db.query(DB_TABLE_MENU, columns, selection, selectionArgs, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            menuName = cursor.getString(cursor.getColumnIndex(COLUMN_MENU_NAME));
+            cursor.close();
+        }
+
+        db.close();
+        return menuName;
+    }
+
 }

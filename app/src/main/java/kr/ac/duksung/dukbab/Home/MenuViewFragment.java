@@ -248,7 +248,10 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
 
         // 데이터베이스에서 추천된 메뉴 ID에 해당하는 메뉴를 검색하고 recommendMenuList에 추가함
         Database database = Database.getInstance();
-        database.openMenuDB(requireContext());
+        //database.openMenuDB(requireContext());
+
+        MenuDBOpenHelper dbHepler = new MenuDBOpenHelper(requireContext());
+
 
         for (int recommendMenuId : recommendedMenuIds) {
             Cursor cursor = database.searchMenuByMenuId(recommendMenuId);
@@ -259,16 +262,21 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
                 int imgIndex = cursor.getColumnIndex(MenuDBOpenHelper.COLUMN_MENU_IMG);
 
                 int storeId = cursor.getInt(storeIdIndex);
-                String menuName = cursor.getString(menuNameIndex);
+                String menuName = cursor.getString(menuNameIndex); // 메뉴 이름을 가져옵니다.
                 String price = cursor.getString(priceIndex);
                 String img = cursor.getString(imgIndex);
 
                 // 검색된 메뉴를 MenuDTO 객체로 생성하여 recommendMenuList에 추가
                 recommendMenuList.add(new MenuDTO(storeId, menuName, price, Integer.parseInt(img)));
 
+                // 메뉴 이름을 출력합니다.
+                Log.d("MenuName", "MenuName for menuId " + recommendMenuId + ": " + menuName);
+
                 cursor.close();
             }
         }
+
+
 
         database.closeMenuDB();
         return recommendMenuList;
