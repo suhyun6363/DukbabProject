@@ -38,7 +38,7 @@ public class TodayMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_today_menu);
 
 
-        button = findViewById(R.id.button);
+        button = findViewById(R.id.btn);
         textView = findViewById(R.id.textView);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

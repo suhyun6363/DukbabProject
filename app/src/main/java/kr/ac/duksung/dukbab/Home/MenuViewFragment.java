@@ -171,10 +171,29 @@ public class MenuViewFragment extends Fragment implements MenuAdapter.MenuAdapte
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+<<<<<<< HEAD
             int storeId = 4; // 원하는 상점의 ID를 지정
+=======
+            int storeId = 3; // 원하는 상점의 ID를 지정
+>>>>>>> 3a6b4eb02111a414f38360b37e435c1aaacc47af
             CongestionCalculator calculator = new CongestionCalculator();
             calculator.calculateAndSetCongestionInfo(storeId);
+
+//            if (storeId == 2) {
+//                CongestionCalculator calculator = new CongestionCalculator();
+//                calculator.calculateAndSetCongestionInfo(storeId);
+//            } else if (storeId == 4) {
+//                CongestionCalculator calculator = new CongestionCalculator();
+//                calculator.calculateAndSetCongestionInfo(storeId);
+//            } else if (storeId == 5) {
+//                CongestionCalculator calculator = new CongestionCalculator();
+//                calculator.calculateAndSetCongestionInfo(storeId);
+//            } else if (storeId == 6) {
+//                CongestionCalculator calculator = new CongestionCalculator();
+//                calculator.calculateAndSetCongestionInfo(storeId);
+//            }
         }
+
         public class CongestionCalculator {
             public void calculateAndSetCongestionInfo(int storeId) {
                 // 현재 날짜 및 시간을 가져오기

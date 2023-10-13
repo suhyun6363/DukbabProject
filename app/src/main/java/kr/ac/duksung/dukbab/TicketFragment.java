@@ -53,16 +53,13 @@ public class TicketFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_ticket, container, false);
 
         // 데이터베이스 헬퍼 클래스 생성
-        OrderDBOpenHelper OrderDBOpenHelper = new OrderDBOpenHelper(getContext());
-
-        // 데이터베이스 연결을 가져옴
-        SQLiteDatabase cartDB = OrderDBOpenHelper.getReadableDatabase();
+        OrderDBOpenHelper orderDBOpenHelper = new OrderDBOpenHelper(getContext());
 
         // 데이터를 쿼리하기 위한 쿼리 문자열 (여기서는 모든 레코드를 가져오는 예제입니다)
         String query = "SELECT * FROM " + OrderDBOpenHelper.TABLE_NAME;
 
-        // 데이터를 쿼리하고 결과를 커서에 저장
-        Cursor cursor = cartDB.rawQuery(query, null);
+        // 최근 주문 내역을 가져옴
+        Cursor cursor = orderDBOpenHelper.getLatestOrder();
 
 
         // 티켓에 표시할 TextView와 Button 찾기
